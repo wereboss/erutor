@@ -574,6 +574,13 @@ def config_set(
     console.print(f"[bold green]✓ Configuration saved to {config_file}[/bold green]")
 
 
+@app.command("doctor")
+def doctor_cmd():
+    """Run diagnostic checks on internet connectivity, DNS, SSL, and media providers."""
+    from erutor.network import run_diagnostics
+    run_diagnostics()
+
+
 def main():
     app()
 
