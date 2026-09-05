@@ -99,10 +99,10 @@ class ErutorManager:
         output_dir: Path,
         force: bool = False,
         video_filename: Optional[str] = None,
-    ) -> dict[str, Path]:
+    ) -> dict[str, Any]:
         """Generate movie.nfo and download poster/fanart safely without modifying video files."""
         output_dir.mkdir(parents=True, exist_ok=True)
-        saved_files: dict[str, Path] = {}
+        saved_files: dict[str, Any] = {"skipped": []}
 
         if video_filename:
             movie.original_filename = video_filename
@@ -114,6 +114,8 @@ class ErutorManager:
             with open(nfo_path, "w", encoding="utf-8") as f:
                 f.write(nfo_content)
             saved_files["nfo"] = nfo_path
+        else:
+            saved_files["skipped"].append(nfo_path)
 
         # Download poster
         if self.config.download_images and movie.posters:
@@ -121,6 +123,8 @@ class ErutorManager:
             if not poster_path.exists() or force:
                 if download_image(movie.posters[0], poster_path, force=force):
                     saved_files["poster"] = poster_path
+            else:
+                saved_files["skipped"].append(poster_path)
 
         # Download fanart
         if self.config.download_images and movie.fanarts:
@@ -128,6 +132,8 @@ class ErutorManager:
             if not fanart_path.exists() or force:
                 if download_image(movie.fanarts[0], fanart_path, force=force):
                     saved_files["fanart"] = fanart_path
+            else:
+                saved_files["skipped"].append(fanart_path)
 
         return saved_files
 

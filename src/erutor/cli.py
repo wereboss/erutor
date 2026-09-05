@@ -451,10 +451,13 @@ def scan_cmd(
     total_nfo = 0
     total_images = 0
     total_skipped = 0
+    total_items = len(items)
 
-    for item in items:
+    console.print(f"\n[bold green]Starting metadata processing for {total_items} media item(s)...[/bold green]\n")
+
+    for idx, item in enumerate(items, 1):
         if item.media_type == "movie":
-            with console.status(f"[bold green]Searching for '{item.title}'...[/bold green]"):
+            with console.status(f"[bold cyan][{idx}/{total_items}][/bold cyan] [bold green]Searching metadata for movie:[/bold green] [bold]{item.title}[/bold]..."):
                 results = manager.search_movies(item.title, year=item.year)
                 movie = manager.get_movie(results[0].id) if results else None
 
@@ -464,16 +467,39 @@ def scan_cmd(
                 movie = resolve_movie_interactively(manager, query=item.title, year=item.year)
 
             if not movie:
-                console.print(f"[dim]Skipping movie '{item.title}'...[/dim]\n")
+                console.print(f"[dim]⏭ [{idx}/{total_items}] Skipped movie '{item.title}'[/dim]\n")
                 continue
 
-            video_filename = item.video_file.name if item.video_file else None
-            saved = manager.save_movie(movie, item.path, force=should_overwrite, video_filename=video_filename)
-            total_nfo += 1 if "nfo" in saved else 0
-            total_images += (1 if "poster" in saved else 0) + (1 if "fanart" in saved else 0)
+            with console.status(f"[bold cyan][{idx}/{total_items}][/bold cyan] [bold green]Writing NFO & downloading artwork for:[/bold green] [bold]{movie.title}[/bold]..."):
+                video_filename = item.video_file.name if item.video_file else None
+                saved = manager.save_movie(movie, item.path, force=should_overwrite, video_filename=video_filename)
+
+            new_nfo = 1 if "nfo" in saved else 0
+            new_img = (1 if "poster" in saved else 0) + (1 if "fanart" in saved else 0)
+            skip_count = len(saved.get("skipped", []))
+            total_nfo += new_nfo
+            total_images += new_img
+            total_skipped += skip_count
+
+            # Immediate progress confirmation with counts
+            updates = []
+            if new_nfo:
+                updates.append(f"1 NFO ({saved['nfo'].name})")
+            if "poster" in saved:
+                updates.append("poster.jpg")
+            if "fanart" in saved:
+                updates.append("fanart.jpg")
+
+            if updates:
+                msg = f"[bold green]✓[/bold green] [bold cyan][{idx}/{total_items}][/bold cyan] [bold white]🎬 Movie:[/bold white] [bold]{movie.title}[/bold] ({movie.year or 'N/A'}) ── [green]Updated: {', '.join(updates)}[/green]"
+                if skip_count:
+                    msg += f" [dim]({skip_count} preserved)[/dim]"
+            else:
+                msg = f"[bold blue]ℹ[/bold blue] [bold cyan][{idx}/{total_items}][/bold cyan] [bold white]🎬 Movie:[/bold white] [bold]{movie.title}[/bold] ({movie.year or 'N/A'}) ── [dim]All files already up to date ({skip_count} preserved)[/dim]"
+            console.print(msg)
 
         elif item.media_type == "tv":
-            with console.status(f"[bold green]Searching for TV show '{item.title}'...[/bold green]"):
+            with console.status(f"[bold cyan][{idx}/{total_items}][/bold cyan] [bold green]Searching metadata for TV show:[/bold green] [bold]{item.title}[/bold]..."):
                 results = manager.search_tv(item.title, year=item.year)
                 show = manager.get_tvshow(results[0].id) if results else None
 
@@ -483,15 +509,15 @@ def scan_cmd(
                 show = resolve_tvshow_interactively(manager, query=item.title, year=item.year)
 
             if not show:
-                console.print(f"[dim]Skipping TV show '{item.title}'...[/dim]\n")
+                console.print(f"[dim]⏭ [{idx}/{total_items}] Skipped TV show '{item.title}'[/dim]\n")
                 continue
 
-            # Build episode mapping from scanned items
-            episodes_map: dict[tuple[int, int], Path] = {}
-            for s_num, ep_list in item.seasons.items():
-                for ep_item in ep_list:
-                    episodes_map[(ep_item.season_number, ep_item.episode_number)] = ep_item.path
-
+            with console.status(f"[bold cyan][{idx}/{total_items}][/bold cyan] [bold green]Writing TV NFOs & downloading artwork for:[/bold green] [bold]{show.title}[/bold]..."):
+                # Build episode mapping from scanned items
+                episodes_map: dict[tuple[int, int], Path] = {}
+                for s_num, ep_list in item.seasons.items():
+                    for ep_item in ep_list:
+                        episodes_map[(ep_item.season_number, ep_item.episode_number)] = ep_item.path
 
                 saved = manager.save_tvshow(
                     show,
@@ -500,16 +526,36 @@ def scan_cmd(
                     existing_episodes_map=episodes_map,
                     create_missing_seasons=create_missing_seasons,
                 )
-                total_nfo += len(saved.get("nfo", []))
-                total_images += len(saved.get("images", []))
-                total_skipped += len(saved.get("skipped", []))
+
+            nfo_count = len(saved.get("nfo", []))
+            img_count = len(saved.get("images", []))
+            skip_count = len(saved.get("skipped", []))
+            total_nfo += nfo_count
+            total_images += img_count
+            total_skipped += skip_count
+
+            # Immediate progress confirmation with counts
+            updates = []
+            if nfo_count:
+                updates.append(f"{nfo_count} NFOs")
+            if img_count:
+                updates.append(f"{img_count} images")
+
+            if updates:
+                msg = f"[bold green]✓[/bold green] [bold cyan][{idx}/{total_items}][/bold cyan] [bold white]📺 TV Series:[/bold white] [bold]{show.title}[/bold] ({show.year or 'N/A'}) ── [green]Updated: {', '.join(updates)}[/green]"
+                if skip_count:
+                    msg += f" [dim]({skip_count} preserved)[/dim]"
+            else:
+                msg = f"[bold blue]ℹ[/bold blue] [bold cyan][{idx}/{total_items}][/bold cyan] [bold white]📺 TV Series:[/bold white] [bold]{show.title}[/bold] ({show.year or 'N/A'}) ── [dim]All files already up to date ({skip_count} preserved)[/dim]"
+            console.print(msg)
 
     summary_text = (
-        f"[bold]Total Media Items Scanned:[/bold] {len(items)}\n"
+        f"[bold]Total Media Items Scanned:[/bold] {total_items}\n"
         f"[bold]New NFO Files Written:[/bold] {total_nfo}\n"
         f"[bold]New Images Saved:[/bold] {total_images}\n"
         f"[bold]Existing Files Preserved (Skipped):[/bold] {total_skipped}"
     )
+    console.print()
     console.print(Panel(summary_text, title="[bold green]✓ Scan & Metadata Generation Complete[/bold green]", expand=False))
 
 
