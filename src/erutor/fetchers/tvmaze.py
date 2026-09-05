@@ -84,24 +84,52 @@ class TVMazeFetcher(BaseFetcher):
         return results
 
     def get_tvshow(self, id: str) -> Optional[TVShowMetadata]:
-        # If id starts with 'tt' (IMDb ID), use TVMaze lookup
-        if id.startswith("tt"):
+        clean_id = id.strip()
+        # Handle explicit prefixes
+        if clean_id.lower().startswith("tvdb:") or clean_id.lower().startswith("thetvdb:"):
+            tvdb_num = clean_id.split(":")[-1].strip()
+            try:
+                resp = self.client.get(f"{self.BASE_URL}/lookup/shows", params={"thetvdb": tvdb_num}, follow_redirects=True)
+                if resp.status_code == 200:
+                    clean_id = str(resp.json().get("id"))
+                else:
+                    return None
+            except Exception:
+                return None
+        elif clean_id.lower().startswith("imdb:"):
+            clean_id = clean_id.split(":")[-1].strip()
+
+        # If clean_id starts with 'tt' (IMDb ID), use TVMaze lookup
+        if clean_id.startswith("tt"):
             lookup_url = f"{self.BASE_URL}/lookup/shows"
             try:
-                resp = self.client.get(lookup_url, params={"imdb": id})
+                resp = self.client.get(lookup_url, params={"imdb": clean_id}, follow_redirects=True)
                 resp.raise_for_status()
                 show_data = resp.json()
-                id = str(show_data.get("id"))
+                clean_id = str(show_data.get("id"))
             except Exception:
                 return None
 
-        url = f"{self.BASE_URL}/shows/{id}"
+        url = f"{self.BASE_URL}/shows/{clean_id}"
+        data = None
         try:
             resp = self.client.get(url, params={"embed[]": ["episodes", "cast", "seasons"]})
-            resp.raise_for_status()
-            data = resp.json()
+            if resp.status_code == 200:
+                data = resp.json()
+            elif resp.status_code == 404 and clean_id.isdigit():
+                # Fallback: maybe clean_id was a TheTVDB ID
+                lookup_resp = self.client.get(f"{self.BASE_URL}/lookup/shows", params={"thetvdb": clean_id}, follow_redirects=True)
+                if lookup_resp.status_code == 200:
+                    resolved_id = str(lookup_resp.json().get("id"))
+                    retry_resp = self.client.get(f"{self.BASE_URL}/shows/{resolved_id}", params={"embed[]": ["episodes", "cast", "seasons"]})
+                    if retry_resp.status_code == 200:
+                        data = retry_resp.json()
         except Exception:
             return None
+
+        if not data:
+            return None
+
 
         title = data.get("name", "Unknown Title")
         premiered = data.get("premiered")

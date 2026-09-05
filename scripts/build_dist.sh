@@ -10,15 +10,24 @@ echo "=== Building Erutor Portable Distribution ==="
 rm -rf build/ dist/
 mkdir -p build/zipapp_staging dist/
 
+# Detect Python / Pip
+if [ -d ".venv" ]; then
+    PYTHON=".venv/bin/python"
+    PIP=".venv/bin/pip"
+else
+    PYTHON="python3"
+    PIP="pip"
+fi
+
 # 1. Build standard wheel and sdist
-python3 -m build
+$PYTHON -m build
 
 # 2. Extract wheel and bundle all pure-python dependencies
 WHEEL=$(ls dist/*.whl | head -n 1)
-pip install --target build/zipapp_staging "$WHEEL"
+$PIP install --target build/zipapp_staging "$WHEEL"
 
 # 3. Create standalone zipapp executable
-python3 -m zipapp build/zipapp_staging -m "erutor.cli:main" -o dist/erutor -p "/usr/bin/env python3"
+$PYTHON -m zipapp build/zipapp_staging -m "erutor.cli:main" -o dist/erutor -p "/usr/bin/env python3"
 chmod +x dist/erutor
 
 # Cleanup temporary staging

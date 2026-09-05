@@ -62,6 +62,157 @@ def parse_cmd(
     console.print(table)
 
 
+def resolve_movie_interactively(
+    manager: ErutorManager,
+    query: Optional[str] = None,
+    year: Optional[int] = None,
+    movie_id: Optional[str] = None,
+) -> Optional[MovieMetadata]:
+    """Interactively search and resolve a movie, prompting for an ID or exact title if not found."""
+    curr_id = movie_id
+    curr_query = query
+    curr_year = year
+
+    while True:
+        # If ID is provided, fetch directly
+        if curr_id:
+            with console.status(f"[bold green]Fetching movie details for ID: {curr_id}...[/bold green]"):
+                movie = manager.get_movie(curr_id)
+            if movie:
+                return movie
+            console.print(f"[bold yellow]⚠️  Could not find movie metadata with ID:[/bold yellow] [cyan]{curr_id}[/cyan]")
+            curr_id = None
+
+        # Search by query
+        results = []
+        if curr_query:
+            with console.status(f"[bold green]Searching for movie '{curr_query}'...[/bold green]"):
+                results = manager.search_movies(curr_query, year=curr_year)
+
+        if results:
+            table = Table(title="Movie Search Results", show_header=True, header_style="bold magenta")
+            table.add_column("#", style="dim", width=4)
+            table.add_column("Title", style="bold")
+            table.add_column("Year", style="cyan", width=6)
+            table.add_column("ID", style="green", width=12)
+            table.add_column("Details", style="italic")
+
+            for idx, r in enumerate(results[:8], 1):
+                table.add_row(str(idx), r.title, str(r.year or ""), r.id, r.overview or "")
+
+            console.print(table)
+            console.print("[dim]Select a number (1-8), [bold]m[/bold] for manual search / enter ID, or [bold]s[/bold] to skip.[/dim]")
+            valid_choices = [str(i) for i in range(1, min(len(results), 8) + 1)] + ["m", "s"]
+            choice = Prompt.ask("[bold cyan]Choice[/bold cyan]", choices=valid_choices, default="1")
+
+            if choice == "s":
+                return None
+            elif choice != "m":
+                selected = results[int(choice) - 1]
+                with console.status(f"[bold green]Fetching details for '{selected.title}' ({selected.id})...[/bold green]"):
+                    movie = manager.get_movie(selected.id)
+                if movie:
+                    return movie
+                console.print(f"[bold red]✗ Failed to load details for {selected.id}[/bold red]")
+
+        # If no results or user chose manual search
+        year_hint = f" ({curr_year})" if curr_year else ""
+        console.print(f"[bold yellow]⚠️  No matches found for movie '{curr_query or 'Unknown'}'{year_hint}.[/bold yellow]")
+        console.print("[dim]Enter an IMDb ID (e.g. tt0405296), TMDB ID, or exact title (or 's' to skip):[/dim]")
+        user_input = Prompt.ask("[bold cyan]Search query / ID[/bold cyan]", default="s").strip()
+
+        if not user_input or user_input.lower() in ("s", "skip", "q", "quit"):
+            return None
+
+        if user_input.lower().startswith("tt") or user_input.lower().startswith("imdb:") or user_input.lower().startswith("tmdb:"):
+            curr_id = user_input
+            curr_query = None
+            curr_year = None
+        else:
+            curr_id = None
+            curr_query = user_input
+            year_input = Prompt.ask("[bold cyan]Release year (optional, press Enter to skip)[/bold cyan]", default="").strip()
+            curr_year = int(year_input) if year_input.isdigit() else None
+
+
+def resolve_tvshow_interactively(
+    manager: ErutorManager,
+    query: Optional[str] = None,
+    year: Optional[int] = None,
+    show_id: Optional[str] = None,
+) -> Optional[TVShowMetadata]:
+    """Interactively search and resolve a TV show, prompting for an ID or exact title if not found."""
+    curr_id = show_id
+    curr_query = query
+    curr_year = year
+
+    while True:
+        # If ID is provided, fetch directly
+        if curr_id:
+            with console.status(f"[bold green]Fetching TV show details for ID: {curr_id}...[/bold green]"):
+                show = manager.get_tvshow(curr_id)
+            if show:
+                return show
+            console.print(f"[bold yellow]⚠️  Could not find TV show metadata with ID:[/bold yellow] [cyan]{curr_id}[/cyan]")
+            curr_id = None
+
+        # Search by query
+        results = []
+        if curr_query:
+            with console.status(f"[bold green]Searching for TV show '{curr_query}'...[/bold green]"):
+                results = manager.search_tv(curr_query, year=curr_year)
+
+        if results:
+            table = Table(title="TV Show Search Results", show_header=True, header_style="bold magenta")
+            table.add_column("#", style="dim", width=4)
+            table.add_column("Title", style="bold")
+            table.add_column("Year", style="cyan", width=6)
+            table.add_column("ID", style="green", width=10)
+            table.add_column("Source", style="yellow", width=8)
+
+            for idx, r in enumerate(results[:8], 1):
+                table.add_row(str(idx), r.title, str(r.year or ""), r.id, r.source)
+
+            console.print(table)
+            console.print("[dim]Select a number (1-8), [bold]m[/bold] for manual search / enter ID, or [bold]s[/bold] to skip.[/dim]")
+            valid_choices = [str(i) for i in range(1, min(len(results), 8) + 1)] + ["m", "s"]
+            choice = Prompt.ask("[bold cyan]Choice[/bold cyan]", choices=valid_choices, default="1")
+
+            if choice == "s":
+                return None
+            elif choice != "m":
+                selected = results[int(choice) - 1]
+                with console.status(f"[bold green]Fetching series and episode guide for '{selected.title}'...[/bold green]"):
+                    show = manager.get_tvshow(selected.id)
+                if show:
+                    return show
+                console.print(f"[bold red]✗ Failed to load details for {selected.id}[/bold red]")
+
+        # If no results or user chose manual search
+        year_hint = f" ({curr_year})" if curr_year else ""
+        console.print(f"[bold yellow]⚠️  No matches found for TV show '{curr_query or 'Unknown'}'{year_hint}.[/bold yellow]")
+        console.print("[dim]Enter an IMDb ID (e.g. tt0084988), TVDB ID (e.g. tvdb:76736), TVMaze ID, or exact title (or 's' to skip):[/dim]")
+        user_input = Prompt.ask("[bold cyan]Search query / ID[/bold cyan]", default="s").strip()
+
+        if not user_input or user_input.lower() in ("s", "skip", "q", "quit"):
+            return None
+
+        if (
+            user_input.lower().startswith("tt")
+            or user_input.lower().startswith("tvdb:")
+            or user_input.lower().startswith("imdb:")
+            or user_input.isdigit()
+        ):
+            curr_id = user_input
+            curr_query = None
+            curr_year = None
+        else:
+            curr_id = None
+            curr_query = user_input
+            year_input = Prompt.ask("[bold cyan]Premiere year (optional, press Enter to skip)[/bold cyan]", default="").strip()
+            curr_year = int(year_input) if year_input.isdigit() else None
+
+
 @app.command("movie")
 def movie_cmd(
     query: Optional[str] = typer.Argument(None, help="Movie title to search, or file path, or IMDb ID"),
@@ -80,7 +231,6 @@ def movie_cmd(
     video_filename: Optional[str] = None
     if query:
         path_candidate = Path(query)
-        # If it's an existing file or has video extension or scene separators
         if path_candidate.is_file() or path_candidate.suffix.lower() in VIDEO_EXTENSIONS or "." in path_candidate.name:
             parsed = TitleParser.parse(query)
             if parsed.title:
@@ -96,52 +246,20 @@ def movie_cmd(
     movie_id = id
     if not movie_id and query and query.startswith("tt") and query[2:].isdigit():
         movie_id = query
+        query = None
 
-    if not movie_id:
-        if not query:
-            query = Prompt.ask("[bold cyan]Enter movie title[/bold cyan]")
-            if not year:
-                year_str = Prompt.ask("[bold cyan]Enter release year (optional)[/bold cyan]", default="")
-                if year_str.strip().isdigit():
-                    year = int(year_str.strip())
+    if not movie_id and not query:
+        query = Prompt.ask("[bold cyan]Enter movie title[/bold cyan]")
+        if not year:
+            year_str = Prompt.ask("[bold cyan]Enter release year (optional)[/bold cyan]", default="")
+            if year_str.strip().isdigit():
+                year = int(year_str.strip())
 
-        with console.status(f"[bold green]Searching for movie '{query}'...[/bold green]"):
-            results = manager.search_movies(query, year=year)
-
-
-        if not results:
-            console.print(f"[bold red]✗ No movies found for query:[/bold red] '{query}'")
-            raise typer.Exit(code=1)
-
-        if len(results) == 1:
-            selected = results[0]
-        else:
-            table = Table(title="Search Results", show_header=True, header_style="bold magenta")
-            table.add_column("#", style="dim", width=4)
-            table.add_column("Title", style="bold")
-            table.add_column("Year", style="cyan", width=6)
-            table.add_column("ID", style="green", width=12)
-            table.add_column("Details", style="italic")
-
-            for idx, r in enumerate(results[:8], 1):
-                table.add_row(str(idx), r.title, str(r.year or ""), r.id, r.overview or "")
-
-            console.print(table)
-            choice = Prompt.ask(
-                "[bold cyan]Select a result number[/bold cyan]",
-                choices=[str(i) for i in range(1, min(len(results), 8) + 1)],
-                default="1",
-            )
-            selected = results[int(choice) - 1]
-
-        movie_id = selected.id
-
-    with console.status(f"[bold green]Fetching details for ID: {movie_id}...[/bold green]"):
-        movie = manager.get_movie(movie_id)
-
+    movie = resolve_movie_interactively(manager, query=query, year=year, movie_id=movie_id)
     if not movie:
-        console.print(f"[bold red]✗ Failed to retrieve movie metadata for ID:[/bold red] {movie_id}")
+        console.print("[dim]Movie fetching canceled.[/dim]")
         raise typer.Exit(code=1)
+
 
     # Determine target directory
     if output is None:
@@ -194,53 +312,22 @@ def tv_cmd(
                     output = path_candidate if path_candidate.is_dir() else path_candidate.parent
 
     show_id = id
-    if not show_id and query and (query.startswith("tt") or query.isdigit()):
+    if not show_id and query and (query.startswith("tt") or query.isdigit() or query.lower().startswith("tvdb:")):
         show_id = query
+        query = None
 
-    if not show_id:
-        if not query:
-            query = Prompt.ask("[bold cyan]Enter TV show title[/bold cyan]")
-            if not year:
-                year_str = Prompt.ask("[bold cyan]Enter premiere year (optional)[/bold cyan]", default="")
-                if year_str.strip().isdigit():
-                    year = int(year_str.strip())
+    if not show_id and not query:
+        query = Prompt.ask("[bold cyan]Enter TV show title[/bold cyan]")
+        if not year:
+            year_str = Prompt.ask("[bold cyan]Enter premiere year (optional)[/bold cyan]", default="")
+            if year_str.strip().isdigit():
+                year = int(year_str.strip())
 
-        with console.status(f"[bold green]Searching for TV show '{query}'...[/bold green]"):
-            results = manager.search_tv(query, year=year)
-
-        if not results:
-            console.print(f"[bold red]✗ No TV shows found for query:[/bold red] '{query}'")
-            raise typer.Exit(code=1)
-
-        if len(results) == 1:
-            selected = results[0]
-        else:
-            table = Table(title="TV Show Search Results", show_header=True, header_style="bold magenta")
-            table.add_column("#", style="dim", width=4)
-            table.add_column("Title", style="bold")
-            table.add_column("Year", style="cyan", width=6)
-            table.add_column("ID", style="green", width=10)
-            table.add_column("Source", style="yellow", width=8)
-
-            for idx, r in enumerate(results[:8], 1):
-                table.add_row(str(idx), r.title, str(r.year or ""), r.id, r.source)
-
-            console.print(table)
-            choice = Prompt.ask(
-                "[bold cyan]Select a result number[/bold cyan]",
-                choices=[str(i) for i in range(1, min(len(results), 8) + 1)],
-                default="1",
-            )
-            selected = results[int(choice) - 1]
-
-        show_id = selected.id
-
-    with console.status(f"[bold green]Fetching full series and episode guide for ID: {show_id}...[/bold green]"):
-        show = manager.get_tvshow(show_id)
-
+    show = resolve_tvshow_interactively(manager, query=query, year=year, show_id=show_id)
     if not show:
-        console.print(f"[bold red]✗ Failed to retrieve TV show metadata for ID:[/bold red] {show_id}")
+        console.print("[dim]TV show fetching canceled.[/dim]")
         raise typer.Exit(code=1)
+
 
     # Determine target directory
     if output is None:
@@ -353,36 +440,46 @@ def scan_cmd(
     total_images = 0
     total_skipped = 0
 
-    with console.status("[bold green]Processing media items...[/bold green]"):
-        for item in items:
-            if item.media_type == "movie":
+    for item in items:
+        if item.media_type == "movie":
+            with console.status(f"[bold green]Searching for '{item.title}'...[/bold green]"):
                 results = manager.search_movies(item.title, year=item.year)
-                if not results:
-                    console.print(f"[bold red]✗ No movie match found for:[/bold red] {item.title}")
-                    continue
-                movie = manager.get_movie(results[0].id)
-                if not movie:
-                    continue
+                movie = manager.get_movie(results[0].id) if results else None
 
-                video_filename = item.video_file.name if item.video_file else None
-                saved = manager.save_movie(movie, item.path, force=should_overwrite, video_filename=video_filename)
-                total_nfo += 1 if "nfo" in saved else 0
-                total_images += (1 if "poster" in saved else 0) + (1 if "fanart" in saved else 0)
+            if not movie:
+                console.print(f"\n[bold yellow]⚠️  Could not automatically find movie:[/bold yellow] [bold cyan]{item.title}[/bold cyan] ({item.year or 'Year unknown'})")
+                console.print(f"[dim]Location: {item.path}[/dim]")
+                movie = resolve_movie_interactively(manager, query=item.title, year=item.year)
 
-            elif item.media_type == "tv":
+            if not movie:
+                console.print(f"[dim]Skipping movie '{item.title}'...[/dim]\n")
+                continue
+
+            video_filename = item.video_file.name if item.video_file else None
+            saved = manager.save_movie(movie, item.path, force=should_overwrite, video_filename=video_filename)
+            total_nfo += 1 if "nfo" in saved else 0
+            total_images += (1 if "poster" in saved else 0) + (1 if "fanart" in saved else 0)
+
+        elif item.media_type == "tv":
+            with console.status(f"[bold green]Searching for TV show '{item.title}'...[/bold green]"):
                 results = manager.search_tv(item.title, year=item.year)
-                if not results:
-                    console.print(f"[bold red]✗ No TV match found for:[/bold red] {item.title}")
-                    continue
-                show = manager.get_tvshow(results[0].id)
-                if not show:
-                    continue
+                show = manager.get_tvshow(results[0].id) if results else None
 
-                # Build episode mapping from scanned items
-                episodes_map: dict[tuple[int, int], Path] = {}
-                for s_num, ep_list in item.seasons.items():
-                    for ep_item in ep_list:
-                        episodes_map[(ep_item.season_number, ep_item.episode_number)] = ep_item.path
+            if not show:
+                console.print(f"\n[bold yellow]⚠️  Could not automatically find TV show:[/bold yellow] [bold cyan]{item.title}[/bold cyan] ({item.year or 'Year unknown'})")
+                console.print(f"[dim]Location: {item.path}[/dim]")
+                show = resolve_tvshow_interactively(manager, query=item.title, year=item.year)
+
+            if not show:
+                console.print(f"[dim]Skipping TV show '{item.title}'...[/dim]\n")
+                continue
+
+            # Build episode mapping from scanned items
+            episodes_map: dict[tuple[int, int], Path] = {}
+            for s_num, ep_list in item.seasons.items():
+                for ep_item in ep_list:
+                    episodes_map[(ep_item.season_number, ep_item.episode_number)] = ep_item.path
+
 
                 saved = manager.save_tvshow(
                     show,
