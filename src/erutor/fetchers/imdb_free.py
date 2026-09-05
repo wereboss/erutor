@@ -10,6 +10,7 @@ import httpx
 
 from erutor.fetchers.base import BaseFetcher, get_http_client
 from erutor.models import MovieMetadata, Person, Rating, SearchResult, TVShowMetadata
+from erutor.tags import deduplicate_tags, fetch_wikipedia_categories
 
 
 class FreeMovieFetcher(BaseFetcher):
@@ -135,8 +136,8 @@ class FreeMovieFetcher(BaseFetcher):
         if not title:
             return None
 
-        # Fetch Wikipedia summary for rich plot, director, writer, genres
-        wiki_plot, wiki_director, wiki_writer, wiki_genres, wiki_poster = self._fetch_wikipedia_info(title, year)
+        # Fetch Wikipedia summary and categories for rich plot, director, writer, genres, tags
+        wiki_plot, wiki_director, wiki_writer, wiki_genres, wiki_poster, wiki_tags = self._fetch_wikipedia_info(title, year)
 
         actors = [Person(name=star, person_type="Actor") for star in stars_list]
         directors = [Person(name=wiki_director, person_type="Director")] if wiki_director else []
@@ -160,18 +161,20 @@ class FreeMovieFetcher(BaseFetcher):
             directors=directors,
             writers=writers,
             genres=wiki_genres,
+            tags=wiki_tags,
             posters=posters,
             ratings=[Rating(name="imdb", value=7.5, is_default=True)] if clean_id else [],
         )
 
     def _fetch_wikipedia_info(
         self, title: str, year: Optional[int]
-    ) -> tuple[Optional[str], Optional[str], Optional[str], list[str], Optional[str]]:
+    ) -> tuple[Optional[str], Optional[str], Optional[str], list[str], Optional[str], list[str]]:
         plot: Optional[str] = None
         director: Optional[str] = None
         writer: Optional[str] = None
         genres: list[str] = []
         poster: Optional[str] = None
+        tags: list[str] = []
 
         search_terms = []
         if year:
@@ -193,7 +196,10 @@ class FreeMovieFetcher(BaseFetcher):
                 continue
 
         if not page_title:
-            return plot, director, writer, genres, poster
+            return plot, director, writer, genres, poster, tags
+
+        # Fetch Wikipedia categories for rich thematic tags
+        tags = fetch_wikipedia_categories(self.client, page_title, media_title=title)
 
         sum_url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{urllib.parse.quote(page_title)}"
         try:
@@ -228,7 +234,7 @@ class FreeMovieFetcher(BaseFetcher):
         except Exception:
             pass
 
-        return plot, director, writer, genres, poster
+        return plot, director, writer, genres, poster, deduplicate_tags(tags)
 
     def search_tv(self, query: str, year: Optional[int] = None) -> list[SearchResult]:
         return []

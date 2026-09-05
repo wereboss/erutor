@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import urllib.parse
 from typing import Optional
 
 import time
@@ -19,6 +20,7 @@ from erutor.models import (
     SeasonMetadata,
     TVShowMetadata,
 )
+from erutor.tags import deduplicate_tags, fetch_wikipedia_categories
 
 console = Console(stderr=True)
 
@@ -83,6 +85,33 @@ class TVMazeFetcher(BaseFetcher):
         except Exception:
             pass
         return None
+
+    def _fetch_tv_tags(self, title: str, year: Optional[int] = None) -> list[str]:
+        """Fetch thematic tags from Wikipedia categories for a TV show."""
+        search_terms = []
+        if year:
+            search_terms.append(f"{title} {year} TV series")
+        search_terms.append(f"{title} TV series")
+        search_terms.append(f"{title} series")
+        search_terms.append(title)
+
+        page_title = None
+        for term in search_terms:
+            search_url = f"https://en.wikipedia.org/w/api.php?action=opensearch&search={urllib.parse.quote(term)}&limit=3&format=json"
+            try:
+                resp = self._safe_get(search_url)
+                if resp and resp.status_code == 200:
+                    candidates = resp.json()[1]
+                    if candidates:
+                        page_title = candidates[0]
+                        break
+            except Exception:
+                continue
+
+        if not page_title:
+            return []
+
+        return fetch_wikipedia_categories(self.client, page_title, media_title=title)
 
     def search_movie(self, query: str, year: Optional[int] = None) -> list[SearchResult]:
         # TVMaze is TV shows only
@@ -324,6 +353,24 @@ class TVMazeFetcher(BaseFetcher):
                 )
             )
 
+        # Collect base tags from TVMaze
+        base_tags: list[str] = []
+        show_type = data.get("type")
+        if show_type:
+            base_tags.append(show_type)
+        language = data.get("language")
+        if language:
+            if language.lower() == "japanese" and (show_type == "Animation" or "Anime" in genres):
+                base_tags.append("Anime")
+            elif language.lower() != "english":
+                base_tags.append(language)
+        for s in studios:
+            base_tags.append(s)
+
+        # Enrich with Wikipedia categories
+        wiki_tags = self._fetch_tv_tags(title, year)
+        all_tags = deduplicate_tags(base_tags + wiki_tags)
+
         # Parse Episodes
         episodes_meta: list[EpisodeMetadata] = []
         for ep in raw_episodes:
@@ -363,9 +410,9 @@ class TVMazeFetcher(BaseFetcher):
                     studios=studios,
                     actors=actors[:10],  # Main recurring cast
                     thumbnail_url=ep_thumb,
+                    tags=all_tags[:5],
                 )
             )
-
 
         return TVShowMetadata(
             title=title,
@@ -383,6 +430,7 @@ class TVMazeFetcher(BaseFetcher):
             imdb_id=imdb_id,
             tvdb_id=tvdb_id,
             official_website=official_site,
+            tags=all_tags,
             actors=actors,
             posters=posters,
             named_seasons=named_seasons,

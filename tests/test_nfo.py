@@ -81,6 +81,11 @@ def test_build_movie_nfo():
     assert root.findtext("director") == "Richard Linklater"
     assert root.findtext("writer") == "Philip K. Dick"
 
+    # Tags
+    tags = [elem.text for elem in root.findall("tag")]
+    assert "cyberpunk" in tags
+    assert "drugs" in tags
+
     # FileInfo
     assert root.findtext("fileinfo/streamdetails/video/codec") == "h264"
     assert root.findtext("fileinfo/streamdetails/video/width") == "1920"
@@ -99,6 +104,7 @@ def test_build_tvshow_nfo():
         genres=["Comedy"],
         studios=["BBC One"],
         countries=["United Kingdom"],
+        tags=["sitcom", "historical comedy", "BBC One"],
         named_seasons={1: "The Black Adder", 2: "Blackadder II"},
         actors=[Person(name="Rowan Atkinson", role="Captain Edmund Blackadder", tvdb_id="274085")],
         posters=["https://example.com/show_poster.jpg"],
@@ -113,6 +119,11 @@ def test_build_tvshow_nfo():
     assert root.findtext("namedseason[@number='1']") == "The Black Adder"
     assert root.findtext("actor/name") == "Rowan Atkinson"
 
+    show_tags = [elem.text for elem in root.findall("tag")]
+    assert "sitcom" in show_tags
+    assert "historical comedy" in show_tags
+    assert "BBC One" in show_tags
+
 
 def test_build_season_nfo():
     season = SeasonMetadata(
@@ -121,6 +132,7 @@ def test_build_season_nfo():
         plot="Set in 1485...",
         year=1983,
         premiered="1983-06-15",
+        tags=["middle ages"],
     )
     xml_str = NFOBuilder.build_season_nfo(season)
     root = ET.fromstring(xml_str)
@@ -130,6 +142,7 @@ def test_build_season_nfo():
     assert root.findtext("title") == "Season 1"
     assert root.findtext("sorttitle") == "0001"
     assert root.findtext("premiered") == "1983-06-15"
+    assert [elem.text for elem in root.findall("tag")] == ["middle ages"]
 
 
 def test_build_episode_nfo():
@@ -144,6 +157,7 @@ def test_build_episode_nfo():
         runtime=34,
         imdb_id="tt0526541",
         tvdb_id="213420",
+        tags=["battle", "royalty"],
         actors=[Person(name="Rowan Atkinson", role="Edmund, Duke of Edinburgh")],
         directors=[Person(name="Martin Shardlow", person_type="Director")],
         writers=[Person(name="Rowan Atkinson", person_type="Writer"), Person(name="Richard Curtis", person_type="Writer")],
@@ -159,3 +173,4 @@ def test_build_episode_nfo():
     assert root.findtext("imdbid") == "tt0526541"
     assert root.findtext("thumb") == "https://example.com/s01e01.jpg"
     assert root.findtext("director") == "Martin Shardlow"
+    assert [elem.text for elem in root.findall("tag")] == ["battle", "royalty"]

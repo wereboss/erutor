@@ -233,6 +233,7 @@ def movie_cmd(
     id: Optional[str] = typer.Option(None, "--id", help="Direct IMDb/TMDB ID"),
     force: bool = typer.Option(False, "--force", "-f", help="Force overwrite existing files and re-download artwork"),
     no_images: bool = typer.Option(False, "--no-images", help="Skip downloading posters and artwork"),
+    tags: Optional[list[str]] = typer.Option(None, "--tag", "-t", help="Custom tag(s) to add to movie metadata"),
 ):
     """Fetch movie metadata, generate movie.nfo, and download artwork."""
     config = Config.load()
@@ -272,6 +273,10 @@ def movie_cmd(
         console.print("[dim]Movie fetching canceled.[/dim]")
         raise typer.Exit(code=1)
 
+    if tags:
+        for t in tags:
+            if t not in movie.tags:
+                movie.tags.append(t)
 
     # Determine target directory
     if output is None:
@@ -289,6 +294,7 @@ def movie_cmd(
         f"[bold]Year:[/bold] {movie.year or 'N/A'}\n"
         f"[bold]IMDb ID:[/bold] {movie.imdb_id or 'N/A'}\n"
         f"[bold]Genres:[/bold] {', '.join(movie.genres) if movie.genres else 'N/A'}\n"
+        f"[bold]Tags:[/bold] {', '.join(movie.tags[:8]) if movie.tags else 'None'}\n"
         f"[bold]Output Dir:[/bold] {target_dir}\n"
         f"[bold]Generated NFO:[/bold] {saved.get('nfo', 'N/A')}\n"
         f"[bold]Poster:[/bold] {saved.get('poster', 'Not downloaded')}"
@@ -304,6 +310,7 @@ def tv_cmd(
     id: Optional[str] = typer.Option(None, "--id", help="Direct TVMaze/IMDb ID"),
     force: bool = typer.Option(False, "--force", "-f", help="Force overwrite existing files and re-download artwork"),
     no_images: bool = typer.Option(False, "--no-images", help="Skip downloading artwork"),
+    tags: Optional[list[str]] = typer.Option(None, "--tag", "-t", help="Custom tag(s) to add to TV show metadata"),
 ):
     """Fetch TV show metadata, generate tvshow.nfo, season.nfo, and episode NFOs."""
     config = Config.load()
@@ -340,6 +347,14 @@ def tv_cmd(
         console.print("[dim]TV show fetching canceled.[/dim]")
         raise typer.Exit(code=1)
 
+    if tags:
+        for t in tags:
+            if t not in show.tags:
+                show.tags.append(t)
+        for ep in show.episodes:
+            for t in tags:
+                if t not in ep.tags:
+                    ep.tags.append(t)
 
     # Determine target directory
     if output is None:
@@ -354,6 +369,8 @@ def tv_cmd(
         f"[bold]Show:[/bold] {show.title} ({show.year or 'N/A'})\n"
         f"[bold]IMDb ID:[/bold] {show.imdb_id or 'N/A'}\n"
         f"[bold]TVDB ID:[/bold] {show.tvdb_id or 'N/A'}\n"
+        f"[bold]Genres:[/bold] {', '.join(show.genres) if show.genres else 'N/A'}\n"
+        f"[bold]Tags:[/bold] {', '.join(show.tags[:8]) if show.tags else 'None'}\n"
         f"[bold]Seasons:[/bold] {len(show.seasons)}\n"
         f"[bold]Episodes:[/bold] {len(show.episodes)}\n"
         f"[bold]Total NFO files written:[/bold] {len(saved['nfo'])}\n"
@@ -374,6 +391,7 @@ def scan_cmd(
         "--create-missing-seasons/--no-missing-seasons",
         help="Create folders upfront for missing seasons in TV shows",
     ),
+    tags: Optional[list[str]] = typer.Option(None, "--tag", "-t", help="Custom tag(s) to add to all scanned media"),
 ):
     """Scan a local directory, detect movies and TV shows, and generate metadata."""
     target_path = directory.resolve()
@@ -470,6 +488,11 @@ def scan_cmd(
                 console.print(f"[dim]⏭ [{idx}/{total_items}] Skipped movie '{item.title}'[/dim]\n")
                 continue
 
+            if tags:
+                for t in tags:
+                    if t not in movie.tags:
+                        movie.tags.append(t)
+
             with console.status(f"[bold cyan][{idx}/{total_items}][/bold cyan] [bold green]Writing NFO & downloading artwork for:[/bold green] [bold]{movie.title}[/bold]..."):
                 video_filename = item.video_file.name if item.video_file else None
                 saved = manager.save_movie(movie, item.path, force=should_overwrite, video_filename=video_filename)
@@ -511,6 +534,15 @@ def scan_cmd(
             if not show:
                 console.print(f"[dim]⏭ [{idx}/{total_items}] Skipped TV show '{item.title}'[/dim]\n")
                 continue
+
+            if tags:
+                for t in tags:
+                    if t not in show.tags:
+                        show.tags.append(t)
+                for ep in show.episodes:
+                    for t in tags:
+                        if t not in ep.tags:
+                            ep.tags.append(t)
 
             with console.status(f"[bold cyan][{idx}/{total_items}][/bold cyan] [bold green]Writing TV NFOs & downloading artwork for:[/bold green] [bold]{show.title}[/bold]..."):
                 # Build episode mapping from scanned items

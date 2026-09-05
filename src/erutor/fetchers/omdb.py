@@ -129,6 +129,10 @@ class OMDbFetcher(BaseFetcher):
         if p and p != "N/A":
             posters.append(p)
 
+        tags = []
+        if data.get("Type") and data.get("Type") != "N/A":
+            tags.append(data.get("Type").lower())
+
         return MovieMetadata(
             title=title,
             original_title=title,
@@ -144,6 +148,7 @@ class OMDbFetcher(BaseFetcher):
             mpaa=mpaa,
             certification=mpaa,
             imdb_id=data.get("imdbID"),
+            tags=tags,
             actors=actors,
             directors=directors,
             writers=writers,

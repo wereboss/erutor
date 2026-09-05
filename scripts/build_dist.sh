@@ -29,6 +29,7 @@ $PIP install --target build/zipapp_staging "$WHEEL"
 # 3. Create standalone zipapp executable
 $PYTHON -m zipapp build/zipapp_staging -m "erutor.cli:main" -o dist/erutor -p "/usr/bin/env python3"
 chmod +x dist/erutor
+cp dist/erutor dist/erutor.pyz
 
 # Cleanup temporary staging
 rm -rf build/zipapp_staging

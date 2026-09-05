@@ -125,6 +125,7 @@ class EpisodeMetadata:
     file_info: Optional[FileInfo] = None
     original_filename: Optional[str] = None
     source: Optional[str] = None
+    tags: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -138,6 +139,7 @@ class SeasonMetadata:
     release_date: Optional[str] = None
     posters: list[str] = field(default_factory=list)
     date_added: Optional[str] = None
+    tags: list[str] = field(default_factory=list)
 
 
 @dataclass

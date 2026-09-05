@@ -123,3 +123,148 @@ def test_config_defaults():
     assert cfg.poster_name == "poster.jpg"
     assert cfg.fanart_name == "fanart.jpg"
     assert cfg.download_images is True
+
+
+def test_imdb_free_get_movie_tags():
+    mock_client = MagicMock(spec=httpx.Client)
+
+    def mock_get(url, *args, **kwargs):
+        resp = MagicMock()
+        resp.status_code = 200
+        if "suggestion" in url:
+            resp.json.return_value = {
+                "d": [{"id": "tt0405296", "l": "A Scanner Darkly", "y": 2006, "s": "Keanu Reeves"}]
+            }
+        elif "opensearch" in url:
+            resp.json.return_value = ["A Scanner Darkly", ["A Scanner Darkly (film)"]]
+        elif "api/rest_v1/page/summary" in url:
+            resp.json.return_value = {
+                "extract": "A Scanner Darkly is an animated science fiction thriller directed by Richard Linklater.",
+            }
+        elif "categories" in kwargs.get("params", {}).get("prop", ""):
+            resp.json.return_value = {
+                "query": {
+                    "pages": {
+                        "1": {
+                            "categories": [
+                                {"title": "Category:2000s dystopian films"},
+                                {"title": "Category:Animated films set in California"},
+                                {"title": "Category:Films about mass surveillance"},
+                            ]
+                        }
+                    }
+                }
+            }
+        else:
+            resp.json.return_value = {}
+        return resp
+
+    mock_client.get.side_effect = mock_get
+
+    fetcher = FreeMovieFetcher(client=mock_client)
+    movie = fetcher.get_movie("tt0405296")
+    assert movie is not None
+    assert "dystopian" in movie.tags
+    assert "california" in movie.tags
+    assert "mass surveillance" in movie.tags
+
+
+def test_tvmaze_get_tvshow_tags():
+    mock_client = MagicMock(spec=httpx.Client)
+
+    def mock_get(url, *args, **kwargs):
+        resp = MagicMock()
+        resp.status_code = 200
+        if "api.tvmaze.com/shows" in url:
+            resp.json.return_value = {
+                "id": 169,
+                "name": "Breaking Bad",
+                "type": "Scripted",
+                "language": "English",
+                "genres": ["Drama", "Crime", "Thriller"],
+                "network": {"name": "AMC"},
+                "_embedded": {
+                    "seasons": [{"number": 1, "name": "Season 1"}],
+                    "episodes": [{"number": 1, "season": 1, "name": "Pilot"}],
+                    "cast": [],
+                },
+            }
+        elif "opensearch" in url:
+            resp.json.return_value = ["Breaking Bad", ["Breaking Bad (TV series)"]]
+        elif "categories" in kwargs.get("params", {}).get("prop", ""):
+            resp.json.return_value = {
+                "query": {
+                    "pages": {
+                        "1": {
+                            "categories": [
+                                {"title": "Category:Television series about organized crime"},
+                                {"title": "Category:Television series about the illegal drug trade"},
+                            ]
+                        }
+                    }
+                }
+            }
+        else:
+            resp.json.return_value = {}
+        return resp
+
+    mock_client.get.side_effect = mock_get
+
+    fetcher = TVMazeFetcher(client=mock_client)
+    show = fetcher.get_tvshow("169")
+    assert show is not None
+    assert "Scripted" in show.tags
+    assert "AMC" in show.tags
+    assert "organized crime" in show.tags
+    assert "illegal drug trade" in show.tags
+    assert len(show.episodes[0].tags) > 0
+
+
+def test_tmdb_tags():
+    from erutor.fetchers.tmdb import TMDBFetcher
+
+    mock_client = MagicMock(spec=httpx.Client)
+
+    def mock_get(url, *args, **kwargs):
+        resp = MagicMock()
+        resp.status_code = 200
+        if "/movie/" in url:
+            resp.json.return_value = {
+                "id": 3509,
+                "title": "A Scanner Darkly",
+                "release_date": "2006-07-07",
+                "keywords": {
+                    "keywords": [
+                        {"id": 1, "name": "cyberpunk"},
+                        {"id": 2, "name": "future"},
+                        {"id": 3, "name": "drugs"},
+                    ]
+                },
+            }
+        elif "/tv/" in url:
+            resp.json.return_value = {
+                "id": 1396,
+                "name": "Breaking Bad",
+                "first_air_date": "2008-01-20",
+                "keywords": {
+                    "results": [
+                        {"id": 1, "name": "drug dealer"},
+                        {"id": 2, "name": "cancer"},
+                    ]
+                },
+            }
+        else:
+            resp.json.return_value = {}
+        return resp
+
+    mock_client.get.side_effect = mock_get
+
+    fetcher = TMDBFetcher(api_key="test_key", client=mock_client)
+    movie = fetcher.get_movie("3509")
+    assert movie is not None
+    assert movie.tags == ["cyberpunk", "future", "drugs"]
+
+    show = fetcher.get_tvshow("1396")
+    assert show is not None
+    assert show.tags == ["drug dealer", "cancer"]
+

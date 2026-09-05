@@ -76,6 +76,12 @@ class ErutorManager:
                 if not movie.mpaa and omdb_meta.mpaa:
                     movie.mpaa = omdb_meta.mpaa
                     movie.certification = omdb_meta.mpaa
+                # Merge tags
+                existing_tags = {t.lower() for t in movie.tags}
+                for t in omdb_meta.tags:
+                    if t.lower() not in existing_tags:
+                        movie.tags.append(t)
+                        existing_tags.add(t.lower())
 
         return movie
 

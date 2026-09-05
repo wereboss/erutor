@@ -356,6 +356,9 @@ class NFOBuilder:
 
         _add_sub_element(root, "seasonnumber", str(season.season_number))
 
+        for tag in season.tags:
+            _add_sub_element(root, "tag", tag)
+
         for poster in season.posters:
             _add_sub_element(root, "thumb", poster, aspect="poster")
 
@@ -411,6 +414,9 @@ class NFOBuilder:
 
         for studio in episode.studios:
             _add_sub_element(root, "studio", studio)
+
+        for tag in episode.tags:
+            _add_sub_element(root, "tag", tag)
 
         for writer in episode.writers:
             _append_person(root, "writer", writer)
