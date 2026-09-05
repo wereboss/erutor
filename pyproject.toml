@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "erutor"
-version = "0.1.0"
+version = "0.1.1"
 description = "A lightweight movie & TV show metadata fetcher and NFO generator"
 readme = "README.md"
 requires-python = ">=3.10"
