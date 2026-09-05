@@ -14,6 +14,7 @@ from rich.table import Table
 
 from erutor.config import Config
 from erutor.manager import ErutorManager
+from erutor.parser import TitleParser, VIDEO_EXTENSIONS
 
 app = typer.Typer(
     name="erutor",
@@ -26,9 +27,43 @@ app.add_typer(config_app)
 console = Console()
 
 
+@app.command("parse")
+def parse_cmd(
+    name: str = typer.Argument(..., help="File name, folder name, or path to parse"),
+):
+    """Inspect how Erutor parses a file or folder name."""
+    parsed = TitleParser.parse(name)
+    table = Table(title=f"Parsed: {Path(name).name}", show_header=True, header_style="bold cyan")
+    table.add_column("Field", style="bold")
+    table.add_column("Detected Value")
+
+    table.add_row("Detected Title", f"[bold green]{parsed.title}[/bold green]")
+    table.add_row("Media Type", f"[cyan]{parsed.media_type.upper()}[/cyan]")
+    table.add_row("Year", str(parsed.year or "[dim]N/A[/dim]"))
+    if parsed.season is not None:
+        ep_str = f"S{parsed.season:02d}E{parsed.episode:02d}" if parsed.episode is not None else f"Season {parsed.season}"
+        if parsed.episode_end:
+            ep_str += f"-E{parsed.episode_end:02d}"
+        table.add_row("Season / Episode", ep_str)
+    if parsed.episode_title:
+        table.add_row("Episode Title", parsed.episode_title)
+    if parsed.resolution:
+        table.add_row("Resolution", f"[yellow]{parsed.resolution}[/yellow]")
+    if parsed.source:
+        table.add_row("Source", parsed.source)
+    if parsed.video_codec:
+        table.add_row("Video Codec", parsed.video_codec)
+    if parsed.audio_codec:
+        table.add_row("Audio Codec", parsed.audio_codec)
+    if parsed.release_group:
+        table.add_row("Release Group", f"[magenta]{parsed.release_group}[/magenta]")
+
+    console.print(table)
+
+
 @app.command("movie")
 def movie_cmd(
-    query: Optional[str] = typer.Argument(None, help="Movie title to search, or IMDb ID (e.g. tt0405296)"),
+    query: Optional[str] = typer.Argument(None, help="Movie title to search, or file path, or IMDb ID"),
     year: Optional[int] = typer.Option(None, "--year", "-y", help="Release year filter"),
     output: Optional[Path] = typer.Option(None, "--output", "-o", help="Target output directory"),
     id: Optional[str] = typer.Option(None, "--id", help="Direct IMDb/TMDB ID"),
@@ -40,6 +75,22 @@ def movie_cmd(
     if no_images:
         config.download_images = False
     manager = ErutorManager(config)
+
+    video_filename: Optional[str] = None
+    if query:
+        path_candidate = Path(query)
+        # If it's an existing file or has video extension or scene separators
+        if path_candidate.is_file() or path_candidate.suffix.lower() in VIDEO_EXTENSIONS or "." in path_candidate.name:
+            parsed = TitleParser.parse(query)
+            if parsed.title:
+                console.print(f"[dim]Auto-detected from filename:[/dim] [cyan]{parsed.title}[/cyan] ({parsed.year or 'Year unknown'})")
+                query = parsed.title
+                if not year and parsed.year:
+                    year = parsed.year
+                if path_candidate.is_file() or path_candidate.suffix.lower() in VIDEO_EXTENSIONS:
+                    video_filename = path_candidate.name
+                    if path_candidate.is_file() and output is None:
+                        output = path_candidate.parent
 
     movie_id = id
     if not movie_id and query and query.startswith("tt") and query[2:].isdigit():
@@ -55,6 +106,7 @@ def movie_cmd(
 
         with console.status(f"[bold green]Searching for movie '{query}'...[/bold green]"):
             results = manager.search_movies(query, year=year)
+
 
         if not results:
             console.print(f"[bold red]✗ No movies found for query:[/bold red] '{query}'")
@@ -98,7 +150,7 @@ def movie_cmd(
         target_dir = output
 
     with console.status(f"[bold green]Saving metadata to {target_dir}...[/bold green]"):
-        saved = manager.save_movie(movie, target_dir, force=force)
+        saved = manager.save_movie(movie, target_dir, force=force, video_filename=video_filename)
 
     # Display clean summary panel
     details_text = (
@@ -127,6 +179,18 @@ def tv_cmd(
     if no_images:
         config.download_images = False
     manager = ErutorManager(config)
+
+    if query:
+        path_candidate = Path(query)
+        if path_candidate.is_dir() or path_candidate.is_file() or path_candidate.suffix.lower() in VIDEO_EXTENSIONS:
+            parsed = TitleParser.parse(query)
+            if parsed.title:
+                console.print(f"[dim]Auto-detected show name:[/dim] [cyan]{parsed.title}[/cyan] ({parsed.year or 'Year unknown'})")
+                query = parsed.title
+                if not year and parsed.year:
+                    year = parsed.year
+                if output is None:
+                    output = path_candidate if path_candidate.is_dir() else path_candidate.parent
 
     show_id = id
     if not show_id and query and (query.startswith("tt") or query.isdigit()):
