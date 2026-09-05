@@ -157,22 +157,50 @@ class TVMazeFetcher(BaseFetcher):
                 )
             )
 
+        # Detect and map year-based or non-sequential season numbers (e.g. Columbo: 1968, 1971...)
+        raw_seasons = embedded.get("seasons") or []
+        raw_episodes = embedded.get("episodes") or []
+
+        all_season_nums = set()
+        for s in raw_seasons:
+            if s.get("number") is not None and s.get("number") > 0:
+                all_season_nums.add(s["number"])
+        for ep in raw_episodes:
+            if ep.get("season") is not None and ep.get("season") > 0:
+                all_season_nums.add(ep["season"])
+
+        has_year_seasons = any(n >= 1000 for n in all_season_nums)
+        season_map: dict[int, int] = {}
+        if has_year_seasons:
+            sorted_nums = sorted(all_season_nums)
+            for idx, old_n in enumerate(sorted_nums, start=1):
+                season_map[old_n] = idx
+            season_map[0] = 0
+
         # Parse Seasons
         seasons_meta: list[SeasonMetadata] = []
         season_posters: dict[int, list[str]] = {}
         named_seasons: dict[int, str] = {}
 
-        for s in embedded.get("seasons") or []:
-            s_num = s.get("number")
-            if s_num is None:
+        for s in raw_seasons:
+            raw_num = s.get("number")
+            if raw_num is None:
                 continue
+            s_num = season_map.get(raw_num, raw_num)
+
             s_name = s.get("name")
             if s_name:
                 named_seasons[s_num] = s_name
 
             s_summary = _strip_html(s.get("summary"))
             s_prem = s.get("premiereDate")
-            s_year = int(s_prem[:4]) if s_prem and len(s_prem) >= 4 else year
+            if raw_num >= 1000:
+                s_year = raw_num
+            elif s_prem and len(s_prem) >= 4:
+                s_year = int(s_prem[:4])
+            else:
+                s_year = year
+
             s_img_obj = s.get("image") or {}
             s_poster = s_img_obj.get("original") or s_img_obj.get("medium")
             s_posters = [s_poster] if s_poster else []
@@ -195,12 +223,13 @@ class TVMazeFetcher(BaseFetcher):
 
         # Parse Episodes
         episodes_meta: list[EpisodeMetadata] = []
-        for ep in embedded.get("episodes") or []:
-            ep_season = ep.get("season")
+        for ep in raw_episodes:
+            raw_season = ep.get("season")
             ep_number = ep.get("number")
-            if ep_season is None or ep_number is None:
+            if raw_season is None or ep_number is None:
                 continue
 
+            ep_season = season_map.get(raw_season, raw_season)
             ep_title = ep.get("name") or f"Episode {ep_number}"
             ep_aired = ep.get("airdate")
             ep_year = int(ep_aired[:4]) if ep_aired and len(ep_aired) >= 4 else year
@@ -233,6 +262,7 @@ class TVMazeFetcher(BaseFetcher):
                     thumbnail_url=ep_thumb,
                 )
             )
+
 
         return TVShowMetadata(
             title=title,
