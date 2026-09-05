@@ -15,6 +15,7 @@ from rich.table import Table
 from erutor.config import Config
 from erutor.manager import ErutorManager
 from erutor.parser import TitleParser, VIDEO_EXTENSIONS
+from erutor.scanner import DirectoryScanner
 
 app = typer.Typer(
     name="erutor",
@@ -263,7 +264,148 @@ def tv_cmd(
     console.print(Panel(summary_text, title="[bold green]✓ TV Series Metadata Generated[/bold green]", expand=False))
 
 
+@app.command("scan")
+def scan_cmd(
+    directory: Path = typer.Argument(Path("."), help="Directory to recursively scan for media"),
+    force: bool = typer.Option(False, "--force", "-f", help="Force overwrite existing metadata"),
+    skip_existing: bool = typer.Option(False, "--skip-existing", "-s", help="Skip existing metadata without prompting"),
+    no_images: bool = typer.Option(False, "--no-images", help="Skip downloading posters and artwork"),
+    create_missing_seasons: bool = typer.Option(
+        True,
+        "--create-missing-seasons/--no-missing-seasons",
+        help="Create folders upfront for missing seasons in TV shows",
+    ),
+):
+    """Scan a local directory, detect movies and TV shows, and generate metadata."""
+    target_path = directory.resolve()
+    if not target_path.exists() or not target_path.is_dir():
+        console.print(f"[bold red]✗ Directory not found:[/bold red] {target_path}")
+        raise typer.Exit(code=1)
+
+    with console.status(f"[bold green]Scanning directory '{target_path}'...[/bold green]"):
+        items = DirectoryScanner.scan(target_path)
+
+    if not items:
+        console.print(f"[bold yellow]No media files found in:[/bold yellow] {target_path}")
+        raise typer.Exit(code=0)
+
+    # Show table of discovered items
+    table = Table(
+        title=f"Discovered Media Items in {target_path.name or str(target_path)}",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("#", style="dim", width=4)
+    table.add_column("Type", width=7)
+    table.add_column("Detected Title", style="bold")
+    table.add_column("Year", style="cyan", width=6)
+    table.add_column("Location")
+    table.add_column("Existing Metadata", style="yellow")
+
+    has_conflicts = False
+    for idx, item in enumerate(items, 1):
+        type_str = "[cyan]MOVIE[/cyan]" if item.media_type == "movie" else "[magenta]TV[/magenta]"
+        try:
+            loc_str = str(item.path.relative_to(target_path))
+            if loc_str == ".":
+                loc_str = item.path.name
+        except ValueError:
+            loc_str = str(item.path)
+
+        meta_status = item.existing_metadata_desc
+        if meta_status != "None":
+            has_conflicts = True
+            meta_display = f"[yellow]{meta_status}[/yellow]"
+        else:
+            meta_display = "[green]None (New)[/green]"
+
+        table.add_row(str(idx), type_str, item.title, str(item.year or ""), loc_str, meta_display)
+
+    console.print(table)
+
+    # Conflict check & user validation
+    should_overwrite = force
+    if has_conflicts and not force and not skip_existing:
+        console.print("\n[bold yellow]⚠️  Existing metadata (.nfo or images) was detected on one or more items.[/bold yellow]")
+        console.print("[dim]Original video files and existing folders will never be modified.[/dim]")
+        console.print("  [bold cyan]1[/bold cyan]: Skip existing metadata (only fetch missing files) [Recommended]")
+        console.print("  [bold cyan]2[/bold cyan]: Overwrite all existing metadata")
+        console.print("  [bold cyan]3[/bold cyan]: Cancel scan")
+        choice = Prompt.ask(
+            "[bold cyan]Select action[/bold cyan]",
+            choices=["1", "2", "3"],
+            default="1",
+        )
+        if choice == "1":
+            should_overwrite = False
+        elif choice == "2":
+            should_overwrite = True
+        else:
+            console.print("[dim]Scan canceled by user.[/dim]")
+            raise typer.Exit(code=0)
+
+    config = Config.load()
+    if no_images:
+        config.download_images = False
+    manager = ErutorManager(config)
+
+    total_nfo = 0
+    total_images = 0
+    total_skipped = 0
+
+    with console.status("[bold green]Processing media items...[/bold green]"):
+        for item in items:
+            if item.media_type == "movie":
+                results = manager.search_movies(item.title, year=item.year)
+                if not results:
+                    console.print(f"[bold red]✗ No movie match found for:[/bold red] {item.title}")
+                    continue
+                movie = manager.get_movie(results[0].id)
+                if not movie:
+                    continue
+
+                video_filename = item.video_file.name if item.video_file else None
+                saved = manager.save_movie(movie, item.path, force=should_overwrite, video_filename=video_filename)
+                total_nfo += 1 if "nfo" in saved else 0
+                total_images += (1 if "poster" in saved else 0) + (1 if "fanart" in saved else 0)
+
+            elif item.media_type == "tv":
+                results = manager.search_tv(item.title, year=item.year)
+                if not results:
+                    console.print(f"[bold red]✗ No TV match found for:[/bold red] {item.title}")
+                    continue
+                show = manager.get_tvshow(results[0].id)
+                if not show:
+                    continue
+
+                # Build episode mapping from scanned items
+                episodes_map: dict[tuple[int, int], Path] = {}
+                for s_num, ep_list in item.seasons.items():
+                    for ep_item in ep_list:
+                        episodes_map[(ep_item.season_number, ep_item.episode_number)] = ep_item.path
+
+                saved = manager.save_tvshow(
+                    show,
+                    item.path,
+                    force=should_overwrite,
+                    existing_episodes_map=episodes_map,
+                    create_missing_seasons=create_missing_seasons,
+                )
+                total_nfo += len(saved.get("nfo", []))
+                total_images += len(saved.get("images", []))
+                total_skipped += len(saved.get("skipped", []))
+
+    summary_text = (
+        f"[bold]Total Media Items Scanned:[/bold] {len(items)}\n"
+        f"[bold]New NFO Files Written:[/bold] {total_nfo}\n"
+        f"[bold]New Images Saved:[/bold] {total_images}\n"
+        f"[bold]Existing Files Preserved (Skipped):[/bold] {total_skipped}"
+    )
+    console.print(Panel(summary_text, title="[bold green]✓ Scan & Metadata Generation Complete[/bold green]", expand=False))
+
+
 @config_app.command("show")
+
 def config_show():
     """Display current Erutor settings and API keys status."""
     cfg = Config.load()
