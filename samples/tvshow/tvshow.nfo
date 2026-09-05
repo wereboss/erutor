@@ -1,0 +1,769 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<tvshow>
+  <plot><![CDATA[Cunning plans and cutting comedy as the Blackadder dynasty plot their way through British history.]]></plot>
+  <outline><![CDATA[Cunning plans and cutting comedy as the Blackadder dynasty plot their way through British history.]]></outline>
+  <lockdata>false</lockdata>
+  <dateadded>2019-10-28 13:10:06</dateadded>
+  <title>Blackadder</title>
+  <originaltitle>Blackadder</originaltitle>
+  <actor>
+    <name>Rowan Atkinson</name>
+    <role>Captain Edmund Blackadder</role>
+    <type>Actor</type>
+    <tmdbid>10730</tmdbid>
+    <tvdbid>274085</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/wxTgS4SFanVKbnvu9xqOzNJWJwz.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Tony Robinson</name>
+    <role>Private S. Baldrick</role>
+    <type>Actor</type>
+    <tmdbid>87385</tmdbid>
+    <tvdbid>302285</tvdbid>
+    <thumb>https://artworks.thetvdb.com/banners/v4/actor/302285/photo/633d73b72786a.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Hugh Laurie</name>
+    <role>Lieutenant The Honourable George Colthurst St. Barleigh</role>
+    <type>Actor</type>
+    <tmdbid>41419</tmdbid>
+    <imdbid>nm0491402</imdbid>
+    <tvdbid>255071</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/lpu443aKW5aKzVnV4xjiqvD1DnK.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Tim McInnerny</name>
+    <role>Captain Kevin Darling</role>
+    <type>Actor</type>
+    <tmdbid>41043</tmdbid>
+    <tvdbid>248012</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/nOLjLixEDo1xFhBmAfRLMKwB9Fv.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Stephen Fry</name>
+    <role>General Sir Anthony Cecil Hogmanay Melchett</role>
+    <type>Actor</type>
+    <tmdbid>11275</tmdbid>
+    <tvdbid>284005</tvdbid>
+    <imdbid>nm0000410</imdbid>
+    <thumb>https://image.tmdb.org/t/p/original/xeheTDmmQDFYaKxEHmyxbjrte4G.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Miranda Richardson</name>
+    <role>Queen Elisabeth</role>
+    <type>Actor</type>
+    <tmdbid>8436</tmdbid>
+    <tvdbid>292017</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/2IEW3fxqHb4AHBl5xU8JuipJbNK.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Colin Firth</name>
+    <role>William Shakespeare</role>
+    <type>Actor</type>
+    <tmdbid>5472</tmdbid>
+    <tvdbid>310383</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/z6wxnkqSTnzO1tcBui0ss7ehdm9.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Kate Moss</name>
+    <role>Marianne</role>
+    <type>Actor</type>
+    <tmdbid>533007</tmdbid>
+  </actor>
+  <actor>
+    <name>Simon Russell Beale</name>
+    <role>Napoléon</role>
+    <type>Actor</type>
+    <tmdbid>57461</tmdbid>
+    <tvdbid>293153</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/kY9lQfGb8HNhq5BM30td4G5FwFr.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Brian Blessed</name>
+    <role>King Richard IV</role>
+    <type>Actor</type>
+    <tmdbid>8318</tmdbid>
+    <tvdbid>280558</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/3mLIr94V5IOA5ndY6GyqKKcyrX6.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Elspet Gray</name>
+    <role>The Queen</role>
+    <type>Actor</type>
+    <tmdbid>1229860</tmdbid>
+    <tvdbid>257358</tvdbid>
+    <thumb>https://artworks.thetvdb.com/banners/actors/48918.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Robert East</name>
+    <role>Harry Prince of Wales</role>
+    <type>Actor</type>
+    <tmdbid>1232077</tmdbid>
+    <tvdbid>415818</tvdbid>
+    <thumb>https://artworks.thetvdb.com/banners/actors/48916.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Patrick Allen</name>
+    <role>Narrator</role>
+    <type>Actor</type>
+    <tmdbid>73980</tmdbid>
+    <tvdbid>299225</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/todxXDMKU81wTUedoay5SI4A1kl.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Peter Cook</name>
+    <role>Richard III</role>
+    <type>Actor</type>
+    <tmdbid>18266</tmdbid>
+  </actor>
+  <actor>
+    <name>Peter Benson</name>
+    <role>Henry VII</role>
+    <type>Actor</type>
+    <tmdbid>1222035</tmdbid>
+    <tvdbid>316769</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/4wSHbIVUVI0moe4wmQbnKffGGvV.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Kathleen St John</name>
+    <role>Goneril</role>
+    <type>Actor</type>
+    <tmdbid>1561590</tmdbid>
+  </actor>
+  <actor>
+    <name>Barbara Miller</name>
+    <role>Regan</role>
+    <type>Actor</type>
+    <tmdbid>1832899</tmdbid>
+  </actor>
+  <actor>
+    <name>Gretchen Franklin</name>
+    <role>Cordelia</role>
+    <type>Actor</type>
+    <tmdbid>214115</tmdbid>
+  </actor>
+  <actor>
+    <name>Alex Norton</name>
+    <role>McAngus, Duke of Argyll</role>
+    <type>Actor</type>
+    <tmdbid>2451</tmdbid>
+    <tvdbid>277058</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/fnP1fFkqoIhOohylSrkfnFyMOuC.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Angus Deayton</name>
+    <role>Jumping Jew of Jerusalem</role>
+    <type>Actor</type>
+    <tmdbid>83150</tmdbid>
+    <thumb>https://image.tmdb.org/t/p/original/yKNPta0OzsIYPid8krhwovOGZfU.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Joolia Cappleman</name>
+    <role>Celia, Countess of Cheltenham</role>
+    <type>Actor</type>
+    <tmdbid>176096</tmdbid>
+  </actor>
+  <actor>
+    <name>Martin Clarke</name>
+    <role>Sir Dominick Prique of Stratford</role>
+    <type>Actor</type>
+    <tmdbid>1833326</tmdbid>
+  </actor>
+  <actor>
+    <name>David Nunn</name>
+    <role>Messenger</role>
+    <type>Actor</type>
+    <tmdbid>1722585</tmdbid>
+  </actor>
+  <actor>
+    <name>Arthur Hewlett</name>
+    <role>Godfrey, Archbishop of Canterbury / William, Bishop of London</role>
+    <type>Actor</type>
+    <tmdbid>95252</tmdbid>
+  </actor>
+  <actor>
+    <name>Paul McDowell</name>
+    <role>Herbert, Archbishop of Canterbury</role>
+    <type>Actor</type>
+    <tmdbid>77327</tmdbid>
+  </actor>
+  <actor>
+    <name>Carolyn Colquhoun</name>
+    <role>Sister Sara</role>
+    <type>Actor</type>
+    <tmdbid>1399037</tmdbid>
+  </actor>
+  <actor>
+    <name>Joyce Grant</name>
+    <role>Mother Superior</role>
+    <type>Actor</type>
+    <tmdbid>1229828</tmdbid>
+  </actor>
+  <actor>
+    <name>Bert Parnaby</name>
+    <role>Cain, a Peasant</role>
+    <type>Actor</type>
+    <tmdbid>1233763</tmdbid>
+  </actor>
+  <actor>
+    <name>Roy Evans</name>
+    <role>Abel, a Peasant</role>
+    <type>Actor</type>
+    <tmdbid>159057</tmdbid>
+  </actor>
+  <actor>
+    <name>Bill Wallis</name>
+    <role>Sir Justin de Boinod</role>
+    <type>Actor</type>
+    <tmdbid>1534230</tmdbid>
+    <thumb>https://image.tmdb.org/t/p/original/sFKslQUYPzIL6T50ZBvZW3nKuFn.jpg</thumb>
+  </actor>
+  <actor>
+    <name>David Delve</name>
+    <role>Sir George de Boeuf</role>
+    <type>Actor</type>
+    <tmdbid>1833330</tmdbid>
+  </actor>
+  <actor>
+    <name>Leslie Sands</name>
+    <role>Lord Graveney</role>
+    <type>Actor</type>
+    <tmdbid>77314</tmdbid>
+  </actor>
+  <actor>
+    <name>Jim Broadbent</name>
+    <role>Don Speekingleesh, an Interpreter</role>
+    <type>Actor</type>
+    <tmdbid>388</tmdbid>
+    <tvdbid>248020</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/jTyvGwwR1NFpvgDhcmuWZCM241w.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Jane Freeman</name>
+    <role>Mrs. Applebottom</role>
+    <type>Actor</type>
+    <tmdbid>1233766</tmdbid>
+  </actor>
+  <actor>
+    <name>Howard Lew Lewis</name>
+    <role>Mr. Applebottom</role>
+    <type>Actor</type>
+    <tmdbid>157785</tmdbid>
+  </actor>
+  <actor>
+    <name>John Rapley</name>
+    <role>Rev. Lloyd</role>
+    <type>Actor</type>
+    <tmdbid>1328618</tmdbid>
+  </actor>
+  <actor>
+    <name>Stephen Tate</name>
+    <role>Lord Chiswick</role>
+    <type>Actor</type>
+    <tmdbid>1233034</tmdbid>
+  </actor>
+  <actor>
+    <name>Frank Finlay</name>
+    <role>The Witchsmeller Pursuivant</role>
+    <type>Actor</type>
+    <tmdbid>6637</tmdbid>
+    <tvdbid>353294</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/fz3sIozTo0L1eCKlwHdoe92dcXk.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Stephen Frost</name>
+    <role>Soft, a Guard</role>
+    <type>Actor</type>
+    <tmdbid>1221001</tmdbid>
+    <thumb>https://image.tmdb.org/t/p/original/cu998GzQ8yRO6mgXaj3sTGuenio.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Richard Murdoch</name>
+    <role>Ross, a Lord</role>
+    <type>Actor</type>
+    <tmdbid>175974</tmdbid>
+  </actor>
+  <actor>
+    <name>Valentine Dyall</name>
+    <role>Angus, a Lord</role>
+    <type>Actor</type>
+    <tmdbid>47480</tmdbid>
+  </actor>
+  <actor>
+    <name>Peter Schofield</name>
+    <role>Fife, a Lord</role>
+    <type>Actor</type>
+    <tmdbid>1833342</tmdbid>
+  </actor>
+  <actor>
+    <name>Mark Arden</name>
+    <role>Anon, a Guard</role>
+    <type>Actor</type>
+    <tmdbid>1214787</tmdbid>
+  </actor>
+  <actor>
+    <name>Perry Benson</name>
+    <role>Daft Ned, a Peasant</role>
+    <type>Actor</type>
+    <tmdbid>59076</tmdbid>
+    <tvdbid>311453</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/3tK0sIa0vmMXCBzlBWvMmcjYxro.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Forbes Collins</name>
+    <role>Dopey Jack, a Peasant</role>
+    <type>Actor</type>
+    <tmdbid>24713</tmdbid>
+    <tvdbid>274024</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/sFxH9jjJs2vs0jtA9T01Zt7j0N7.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Patrick Duncan</name>
+    <role>Officer, an Officer</role>
+    <type>Actor</type>
+    <tmdbid>1832910</tmdbid>
+  </actor>
+  <actor>
+    <name>Patrick Malahide</name>
+    <role>Guy of Glastonbury</role>
+    <type>Actor</type>
+    <tmdbid>8979</tmdbid>
+    <tvdbid>247962</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/ae0AJ8FbJireYPQyglIxNucjqIy.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Paul Brooke</name>
+    <role>Friar Bellows</role>
+    <type>Actor</type>
+    <tmdbid>9142</tmdbid>
+    <tvdbid>259639</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/2NYNzLYcHKD6EnucEPj2Sh1GTVJ.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Rik Mayall</name>
+    <role>Flasheart</role>
+    <type>Actor</type>
+    <tmdbid>14469</tmdbid>
+  </actor>
+  <actor>
+    <name>Ron Cook</name>
+    <role>Sean, the Irish</role>
+    <type>Actor</type>
+    <tmdbid>5319</tmdbid>
+    <tvdbid>314962</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/bYJ2x9FfQobon2Iai5CvoLgv1U5.jpg</thumb>
+  </actor>
+  <actor>
+    <name>John Hallam</name>
+    <role>Sir Wilfred Death</role>
+    <type>Actor</type>
+    <tmdbid>12690</tmdbid>
+  </actor>
+  <actor>
+    <name>Roger Sloman</name>
+    <role>Three Fingered Pete</role>
+    <type>Actor</type>
+    <tmdbid>42593</tmdbid>
+  </actor>
+  <actor>
+    <name>John Barrard</name>
+    <role>Retired Morris Dancer</role>
+    <type>Actor</type>
+    <tmdbid>1567845</tmdbid>
+  </actor>
+  <actor>
+    <name>Des Webb</name>
+    <role>Person of Unrestricted Growth</role>
+    <type>Actor</type>
+    <tmdbid>132539</tmdbid>
+  </actor>
+  <actor>
+    <name>John Carlisle</name>
+    <role>Murdered Lord</role>
+    <type>Actor</type>
+    <tmdbid>77682</tmdbid>
+  </actor>
+  <actor>
+    <name>Tony Aitken</name>
+    <role>Minstrel</role>
+    <type>Actor</type>
+    <tmdbid>1212147</tmdbid>
+    <thumb>https://image.tmdb.org/t/p/original/4vGvK4Tm2laz1jyg94kRej5DSLP.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Patsy Byrne</name>
+    <role>Nursie</role>
+    <type>Actor</type>
+    <tmdbid>201488</tmdbid>
+    <tvdbid>323346</tvdbid>
+    <thumb>https://artworks.thetvdb.com/banners/actors/48917.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Gabrielle Glaister</name>
+    <role>Kate / Bob</role>
+    <type>Actor</type>
+    <tmdbid>1230907</tmdbid>
+  </actor>
+  <actor>
+    <name>John Grillo</name>
+    <role>Dr. Leech</role>
+    <type>Actor</type>
+    <tmdbid>42568</tmdbid>
+    <tvdbid>306413</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/fqCxjtHYSZMHc4p6Ybg3vsp0rIS.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Edward Jewesbury</name>
+    <role>Kate's Father</role>
+    <type>Actor</type>
+    <tmdbid>138415</tmdbid>
+    <tvdbid>284176</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/52VarIRkuFrbuRhDoum8A0WD1dg.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Sadie Shimmin</name>
+    <role>Young Crone</role>
+    <type>Actor</type>
+    <tmdbid>1240508</tmdbid>
+  </actor>
+  <actor>
+    <name>Holly De Jong</name>
+    <role>Lady Farrow</role>
+    <type>Actor</type>
+    <tmdbid>84893</tmdbid>
+  </actor>
+  <actor>
+    <name>Linda Polan</name>
+    <role>Mrs. Ploppy</role>
+    <type>Actor</type>
+    <tmdbid>27328</tmdbid>
+  </actor>
+  <actor>
+    <name>Tom Baker</name>
+    <role>Captain Rum</role>
+    <type>Actor</type>
+    <tmdbid>44865</tmdbid>
+  </actor>
+  <actor>
+    <name>Simon Jones</name>
+    <role>Sir Walter Raleigh</role>
+    <type>Actor</type>
+    <tmdbid>37891</tmdbid>
+    <tvdbid>271621</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/lTTlSgTfbvI27hP4og8BZMUJWMh.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Ronald Lacey</name>
+    <role>Bishop of Bath &amp; Wells</role>
+    <type>Actor</type>
+    <tmdbid>653</tmdbid>
+    <tvdbid>312041</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/wrFU5EkxKIq0TpEBuKXzcRAld73.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Lesley Nicol</name>
+    <role>Mrs. Pants</role>
+    <type>Actor</type>
+    <tmdbid>174727</tmdbid>
+  </actor>
+  <actor>
+    <name>Barry Craine</name>
+    <role>Mr. Pants</role>
+    <type>Actor</type>
+    <tmdbid>1536465</tmdbid>
+  </actor>
+  <actor>
+    <name>Cassie Stuart</name>
+    <role>Molly</role>
+    <type>Actor</type>
+    <tmdbid>91536</tmdbid>
+  </actor>
+  <actor>
+    <name>John Pierce Jones</name>
+    <role>Arthur the Sailor</role>
+    <type>Actor</type>
+    <tmdbid>141537</tmdbid>
+  </actor>
+  <actor>
+    <name>Philip Pope</name>
+    <role>Leonardo Acropolis</role>
+    <type>Actor</type>
+    <tmdbid>1359383</tmdbid>
+  </actor>
+  <actor>
+    <name>Piers Ibbotson</name>
+    <role>Messenger</role>
+    <type>Actor</type>
+    <tmdbid>1832946</tmdbid>
+  </actor>
+  <actor>
+    <name>Miriam Margolyes</name>
+    <role>Lady Whiteadder</role>
+    <type>Actor</type>
+    <tmdbid>6199</tmdbid>
+    <tvdbid>253691</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/93k0aFwiuDT5sIS3oTX1jKgUYXE.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Roger Blake</name>
+    <role>Geoffrey Piddle</role>
+    <type>Actor</type>
+    <tmdbid>1832958</tmdbid>
+  </actor>
+  <actor>
+    <name>William Hootkins</name>
+    <role>Monk</role>
+    <type>Actor</type>
+    <tmdbid>663</tmdbid>
+    <tvdbid>311882</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/dav2i86GN0UvYIyoTwQmGE8Nweg.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Daniel Thorndike</name>
+    <role>Lord Whiteadder</role>
+    <type>Actor</type>
+    <tmdbid>1832961</tmdbid>
+  </actor>
+  <actor>
+    <name>Max Harvey</name>
+    <role>Torturer</role>
+    <type>Actor</type>
+    <tmdbid>1832277</tmdbid>
+  </actor>
+  <actor>
+    <name>Lee Cornes</name>
+    <role>Guard 2</role>
+    <type>Actor</type>
+    <tmdbid>1211932</tmdbid>
+  </actor>
+  <actor>
+    <name>Helen Atkinson-Wood</name>
+    <role>Mrs. Miggins</role>
+    <type>Actor</type>
+    <tmdbid>1225541</tmdbid>
+    <tvdbid>7950927</tvdbid>
+    <thumb>https://artworks.thetvdb.com/banners/v4/actor/7950927/photo/61f9db4b590e4.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Vincent Hanna</name>
+    <role>Mr. Vincent Hanna</role>
+    <type>Actor</type>
+    <tmdbid>1233769</tmdbid>
+  </actor>
+  <actor>
+    <name>Denis Lill</name>
+    <role>Sir Talbot Buxomly</role>
+    <type>Actor</type>
+    <tmdbid>129452</tmdbid>
+    <thumb>https://image.tmdb.org/t/p/original/9tbJGo2OC4dzr8Mpk3QM0sMfdMb.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Simon Osborne</name>
+    <role>Pitt the Younger</role>
+    <type>Actor</type>
+    <tmdbid>1833010</tmdbid>
+  </actor>
+  <actor>
+    <name>Dominic Martelli</name>
+    <role>Pitt the Even Younger</role>
+    <type>Actor</type>
+    <tmdbid>1833011</tmdbid>
+  </actor>
+  <actor>
+    <name>Geoffrey McGivern</name>
+    <role>Ivor Biggun</role>
+    <type>Actor</type>
+    <tmdbid>62970</tmdbid>
+    <thumb>https://image.tmdb.org/t/p/original/lWXOwpA6n0uNrCaz1np98DCK7B8.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Robbie Coltrane</name>
+    <role>Dr. Samuel Johnson</role>
+    <type>Actor</type>
+    <tmdbid>1923</tmdbid>
+    <tvdbid>7864943</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/jOHs3xvlwRiiG2CLtso5zzmGCXg.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Steve Steen</name>
+    <role>Byron</role>
+    <type>Actor</type>
+    <tmdbid>1222647</tmdbid>
+  </actor>
+  <actor>
+    <name>Nigel Planer</name>
+    <role>Lord Smedley</role>
+    <type>Actor</type>
+    <tmdbid>117555</tmdbid>
+  </actor>
+  <actor>
+    <name>Chris Barrie</name>
+    <role>Ambassador, a fearsome revolutionary</role>
+    <type>Actor</type>
+    <tmdbid>20511</tmdbid>
+  </actor>
+  <actor>
+    <name>Hugh Paddick</name>
+    <role>Keanrick</role>
+    <type>Actor</type>
+    <tmdbid>91282</tmdbid>
+  </actor>
+  <actor>
+    <name>Kenneth Connor</name>
+    <role>Mossup</role>
+    <type>Actor</type>
+    <tmdbid>40962</tmdbid>
+  </actor>
+  <actor>
+    <name>Ben Elton</name>
+    <role>Anarchist</role>
+    <type>Actor</type>
+    <tmdbid>76221</tmdbid>
+    <tvdbid>274079</tvdbid>
+    <imdbid>nm0255780</imdbid>
+    <thumb>https://image.tmdb.org/t/p/original/ic4ssAVy5vOTLulN5CwrAd3DxwI.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Warren Clarke</name>
+    <role>Mr. Hardwood</role>
+    <type>Actor</type>
+    <tmdbid>2268</tmdbid>
+    <tvdbid>259705</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/ecBiugofrkuSk5tRu6IUpQDNGio.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Barbara Horne</name>
+    <role>Sally Cheapside</role>
+    <type>Actor</type>
+    <tmdbid>1352511</tmdbid>
+  </actor>
+  <actor>
+    <name>Roger Avon</name>
+    <role>The Duke of Cheapside</role>
+    <type>Actor</type>
+    <tmdbid>47386</tmdbid>
+  </actor>
+  <actor>
+    <name>Gertan Klauber</name>
+    <role>King George III</role>
+    <type>Actor</type>
+    <tmdbid>95095</tmdbid>
+    <tvdbid>258542</tvdbid>
+  </actor>
+  <actor>
+    <name>Jeremy Hardy</name>
+    <role>Corporal Perkins</role>
+    <type>Actor</type>
+    <tmdbid>85083</tmdbid>
+  </actor>
+  <actor>
+    <name>Jeremy Gittins</name>
+    <role>Private Tipplewick</role>
+    <type>Actor</type>
+    <tmdbid>1212173</tmdbid>
+  </actor>
+  <actor>
+    <name>Paul Mark Elliott</name>
+    <role>Private Robinson</role>
+    <type>Actor</type>
+    <tmdbid>62962</tmdbid>
+  </actor>
+  <actor>
+    <name>Adrian Edmondson</name>
+    <role>Baron von Richtoven</role>
+    <type>Actor</type>
+    <tmdbid>98464</tmdbid>
+  </actor>
+  <actor>
+    <name>Hugo Blick</name>
+    <role>Lieutenant von Gerhardt</role>
+    <type>Actor</type>
+    <tmdbid>218373</tmdbid>
+  </actor>
+  <actor>
+    <name>Geoffrey Palmer</name>
+    <role>Field Marshal Haig</role>
+    <type>Actor</type>
+    <tmdbid>10746</tmdbid>
+    <tvdbid>258488</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/wfFydeTnTIdtu8oKcY7SCo7u7pg.jpg</thumb>
+  </actor>
+  <rating>8</rating>
+  <year>1983</year>
+  <sorttitle>Blackadder</sorttitle>
+  <mpaa>TV-PG</mpaa>
+  <imdb_id>tt0084988</imdb_id>
+  <tmdbid>7246</tmdbid>
+  <premiered>1983-06-15</premiered>
+  <releasedate>1983-06-15</releasedate>
+  <enddate>2009-10-19</enddate>
+  <runtime>32</runtime>
+  <country>United Kingdom</country>
+  <genre>Comedy</genre>
+  <studio>BBC One</studio>
+  <studio>BBC</studio>
+  <tag>army</tag>
+  <tag>civil war</tag>
+  <tag>england</tag>
+  <tag>world war i</tag>
+  <tag>servant</tag>
+  <tag>prince</tag>
+  <tag>dark comedy</tag>
+  <tag>satire</tag>
+  <tag>queen elizabeth i</tag>
+  <tag>middle ages</tag>
+  <tag>sitcom</tag>
+  <tag>period sitcom</tag>
+  <uniqueid type="tvdb">76736</uniqueid>
+  <tvdbid>76736</tvdbid>
+  <uniqueid type="imdb">tt0084988</uniqueid>
+  <uniqueid type="tmdb">7246</uniqueid>
+  <uniqueid type="official website">https://www.bbc.co.uk/programmes/b006xxw3</uniqueid>
+  <art>
+    <poster>/Volumes/SRIPASS/Sri/Vids/Series/Blackadder/poster.jpg</poster>
+    <fanart>/Volumes/SRIPASS/Sri/Vids/Series/Blackadder/fanart.jpg</fanart>
+  </art>
+  <episodeguide>{"tvdb":"76736","imdb":"tt0084988","tmdb":"7246","official website":"https://www.bbc.co.uk/programmes/b006xxw3"}</episodeguide>
+  <id>76736</id>
+  <season>-1</season>
+  <episode>-1</episode>
+  <displayorder>aired</displayorder>
+  <status>Ended</status>
+  <showtitle>Blackadder</showtitle>
+  <ratings>
+    <rating default="true" max="10" name="themoviedb">
+      <value>7.9</value>
+      <votes>328</votes>
+    </rating>
+    <rating default="false" max="10" name="default">
+      <value>8.0</value>
+      <votes>33221</votes>
+    </rating>
+  </ratings>
+  <thumb aspect="poster">https://image.tmdb.org/t/p/original/y3rXOeklqhZ7BTBveW5WLJqyjgU.jpg</thumb>
+  <thumb aspect="banner">https://assets.fanart.tv/fanart/tv/76736/seasonbanner/blackadder-5875366b541ca.jpg</thumb>
+  <namedseason number="0">Specials</namedseason>
+  <namedseason number="1">The Black Adder</namedseason>
+  <namedseason number="2">Blackadder II</namedseason>
+  <namedseason number="3">Black Adder the Third</namedseason>
+  <namedseason number="4">Blackadder Goes Forth</namedseason>
+  <thumb aspect="poster" season="0" type="season">https://image.tmdb.org/t/p/original/4bZb6xtEAYZUder0b2XqbBOyLxL.jpg</thumb>
+  <thumb aspect="poster" season="1" type="season">https://image.tmdb.org/t/p/original/4bwLLDgZgBUUFgBeksPUgkdvUem.jpg</thumb>
+  <thumb aspect="poster" season="2" type="season">https://image.tmdb.org/t/p/original/8NUfvp3d78DA2Y2DD0N2XKzMHFi.jpg</thumb>
+  <thumb aspect="poster" season="3" type="season">https://image.tmdb.org/t/p/original/7znrOIMc5SrkTZizuJI23dOJeT5.jpg</thumb>
+  <thumb aspect="poster" season="4" type="season">https://image.tmdb.org/t/p/original/lID8B0x6erNSZNlkHgmsMLpugHB.jpg</thumb>
+  <thumb aspect="banner" season="0" type="season">https://assets.fanart.tv/fanart/tv/76736/seasonbanner/blackadder-5875366b541ca.jpg</thumb>
+  <thumb aspect="banner" season="1" type="season">https://assets.fanart.tv/fanart/tv/76736/seasonbanner/blackadder-587536294893c.jpg</thumb>
+  <thumb aspect="banner" season="2" type="season">https://assets.fanart.tv/fanart/tv/76736/seasonbanner/blackadder-58753636eb4da.jpg</thumb>
+  <thumb aspect="banner" season="3" type="season">https://assets.fanart.tv/fanart/tv/76736/seasonbanner/blackadder-5875364744e1f.jpg</thumb>
+  <thumb aspect="banner" season="4" type="season">https://assets.fanart.tv/fanart/tv/76736/seasonbanner/blackadder-58753658930af.jpg</thumb>
+  <thumb aspect="thumb" season="1" type="season">https://assets.fanart.tv/fanart/tv/76736/seasonthumb/blackadder-50f04b8c623ef.jpg</thumb>
+  <thumb aspect="thumb" season="2" type="season">https://assets.fanart.tv/fanart/tv/76736/seasonthumb/blackadder-50f04b9711a23.jpg</thumb>
+  <thumb aspect="thumb" season="3" type="season">https://assets.fanart.tv/fanart/tv/76736/seasonthumb/blackadder-50f04ba06e327.jpg</thumb>
+  <thumb aspect="thumb" season="4" type="season">https://assets.fanart.tv/fanart/tv/76736/seasonthumb/blackadder-50f04baa13937.jpg</thumb>
+  <fanart>
+    <thumb>https://image.tmdb.org/t/p/original/ArLn4fRjLqqMtyPTB22qaTK4Cxt.jpg</thumb>
+  </fanart>
+  <certification>TV-PG</certification>
+  <user_note />
+</tvshow>

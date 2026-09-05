@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--created on 2024-10-09 11:52:00 - tinyMediaManager 4.3.16-->
+<movie>
+  <title>A Scanner Darkly</title>
+  <originaltitle>A Scanner Darkly</originaltitle>
+  <sorttitle>Scanner Darkly</sorttitle>
+  <epbookmark/>
+  <year>2006</year>
+  <ratings>
+    <rating default="false" max="10" name="themoviedb">
+      <value>6.8</value>
+      <votes>1718</votes>
+    </rating>
+    <rating default="true" max="100" name="tomatometerallcritics">
+      <value>68.0</value>
+      <votes>0</votes>
+    </rating>
+    <rating default="false" max="10" name="NFO">
+      <value>7.0</value>
+      <votes>0</votes>
+    </rating>
+  </ratings>
+  <userrating>0</userrating>
+  <top250>0</top250>
+  <set/>
+  <plot>An undercover cop in a not-too-distant future becomes involved with a dangerous new drug and begins to lose his own identity as a result.</plot>
+  <outline>An undercover cop in a not-too-distant future becomes involved with a dangerous new drug and begins to lose his own identity as a result.</outline>
+  <tagline>Everything is not going to be OK.</tagline>
+  <runtime>100</runtime>
+  <thumb aspect="poster">https://image.tmdb.org/t/p/original/72kQ9tlP0fweBmbTqzkfUCTUUS.jpg</thumb>
+  <fanart>
+    <thumb>https://image.tmdb.org/t/p/original/tfe6c8E5KSKOHECIvtDRj4zGgS9.jpg</thumb>
+    <thumb>https://image.tmdb.org/t/p/original/s5IAf8SWFefUS0lAHoTVm5cvbTY.jpg</thumb>
+  </fanart>
+  <mpaa>R</mpaa>
+  <certification>R</certification>
+  <id>tt0405296</id>
+  <tmdbid>3509</tmdbid>
+  <uniqueid default="false" type="tmdb">3509</uniqueid>
+  <uniqueid default="true" type="imdb">tt0405296</uniqueid>
+  <uniqueid default="false" type="tvdb">4313</uniqueid>
+  <uniqueid default="false" type="official website">http://www.warnerbros.com/movies/home-entertainment/scanner-darkly-a/d7c290af-c285-41c4-a4d6-efb3a86</uniqueid>
+  <country>United States</country>
+  <status/>
+  <code/>
+  <premiered>2006-07-07</premiered>
+  <watched>false</watched>
+  <playcount>0</playcount>
+  <genre>Animation</genre>
+  <genre>Science Fiction</genre>
+  <genre>Thriller</genre>
+  <studio>Warner Independent Pictures</studio>
+  <studio>Thousand Words</studio>
+  <studio>Detour Filmproduction</studio>
+  <studio>Section Eight</studio>
+  <studio>3 Arts Entertainment</studio>
+  <credits tmdbid="584">Philip K. Dick</credits>
+  <credits tmdbid="564">Richard Linklater</credits>
+  <director tmdbid="564">Richard Linklater</director>
+  <tag>future</tag>
+  <tag>california</tag>
+  <tag>dream</tag>
+  <tag>schizophrenia</tag>
+  <tag>based on novel or book</tag>
+  <tag>undercover</tag>
+  <tag>detective</tag>
+  <tag>dystopia</tag>
+  <tag>cocaine</tag>
+  <tag>exam</tag>
+  <tag>assignment</tag>
+  <tag>cyberpunk</tag>
+  <tag>drugs</tag>
+  <tag>surveillance</tag>
+  <tag>totalitarian</tag>
+  <tag>corporation</tag>
+  <tag>substance</tag>
+  <tag>condition</tag>
+  <tag>neo-noir</tag>
+  <tag>dubious</tag>
+  <actor>
+    <name>Keanu Reeves</name>
+    <role>Bob Arctor</role>
+    <thumb>https://image.tmdb.org/t/p/h632/4D0PpNI0kmP58hgrwGC3wCjxhnm.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/6384</profile>
+    <tmdbid>6384</tmdbid>
+  </actor>
+  <actor>
+    <name>Robert Downey Jr.</name>
+    <role>James Barris</role>
+    <thumb>https://image.tmdb.org/t/p/h632/5qHNjhtjMD4YWH3UP0rm4tKwxCL.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/3223</profile>
+    <tmdbid>3223</tmdbid>
+  </actor>
+  <actor>
+    <name>Woody Harrelson</name>
+    <role>Ernie Luckman</role>
+    <thumb>https://image.tmdb.org/t/p/h632/igxYDQBbTEdAqaJxaW6ffqswmUU.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/57755</profile>
+    <tmdbid>57755</tmdbid>
+  </actor>
+  <actor>
+    <name>Winona Ryder</name>
+    <role>Donna Hawthorne</role>
+    <thumb>https://image.tmdb.org/t/p/h632/mm15IdPsmnHNFAx6LAnpFLPzEZZ.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/1920</profile>
+    <tmdbid>1920</tmdbid>
+  </actor>
+  <actor>
+    <name>Rory Cochrane</name>
+    <role>Charles Freck</role>
+    <thumb>https://image.tmdb.org/t/p/h632/yBwm1RI4QCRXM0vkkDGVqdoiZLH.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/51792</profile>
+    <tmdbid>51792</tmdbid>
+  </actor>
+  <actor>
+    <name>Mitch Baker</name>
+    <role>Brown Bear Lodge Host</role>
+    <thumb>https://image.tmdb.org/t/p/h632/7d8EnYtFKs7H7CMzZXHpqIo82b3.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/32238</profile>
+    <tmdbid>32238</tmdbid>
+  </actor>
+  <actor>
+    <name>Sean Allen</name>
+    <role>Additional Fred Scramble Suit Voice (voice)</role>
+    <profile>https://www.themoviedb.org/person/1235693</profile>
+    <tmdbid>1235693</tmdbid>
+  </actor>
+  <actor>
+    <name>Cliff Haby</name>
+    <role>Voice from Headquarters (voice)</role>
+    <profile>https://www.themoviedb.org/person/1813368</profile>
+    <tmdbid>1813368</tmdbid>
+  </actor>
+  <actor>
+    <name>Steven Chester Prince</name>
+    <role>Cop</role>
+    <thumb>https://image.tmdb.org/t/p/h632/o4LcIXl2hclekFRB9VMO7HUpm16.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/32239</profile>
+    <tmdbid>32239</tmdbid>
+  </actor>
+  <actor>
+    <name>Natasha Valdez</name>
+    <role>Waitress</role>
+    <profile>https://www.themoviedb.org/person/32240</profile>
+    <tmdbid>32240</tmdbid>
+  </actor>
+  <actor>
+    <name>Mark Turner</name>
+    <role>Additional Hank Scramble Suit Voice (voice)</role>
+    <profile>https://www.themoviedb.org/person/1595122</profile>
+    <tmdbid>1595122</tmdbid>
+  </actor>
+  <actor>
+    <name>Chamblee Ferguson</name>
+    <role>Medical Deputy #2</role>
+    <thumb>https://image.tmdb.org/t/p/h632/halcy8dDWxFsSyuGAlXKTeoqCkU.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/32242</profile>
+    <tmdbid>32242</tmdbid>
+  </actor>
+  <actor>
+    <name>Angela Rawna</name>
+    <role>Medical Deputy #1</role>
+    <thumb>https://image.tmdb.org/t/p/h632/uyoLasMbsjarCDdng0x3NH2UTfS.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/32241</profile>
+    <tmdbid>32241</tmdbid>
+  </actor>
+  <actor>
+    <name>Eliza Stevens</name>
+    <role>Arctor's Daughter #1</role>
+    <profile>https://www.themoviedb.org/person/4042219</profile>
+    <tmdbid>4042219</tmdbid>
+  </actor>
+  <actor>
+    <name>Sarah Menchaca</name>
+    <role>Arctor's Daughter #2</role>
+    <profile>https://www.themoviedb.org/person/4042220</profile>
+    <tmdbid>4042220</tmdbid>
+  </actor>
+  <actor>
+    <name>Melody Chase</name>
+    <role>Arctor's Wife</role>
+    <thumb>https://image.tmdb.org/t/p/h632/6kCdImrbBtxGyo7fB2UtQLGeKlr.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/32243</profile>
+    <tmdbid>32243</tmdbid>
+  </actor>
+  <actor>
+    <name>Leif Anders</name>
+    <role>Freck Suicide Narrator (voice)</role>
+    <profile>https://www.themoviedb.org/person/4042228</profile>
+    <tmdbid>4042228</tmdbid>
+  </actor>
+  <actor>
+    <name>Turk Pipkin</name>
+    <role>Creature</role>
+    <thumb>https://image.tmdb.org/t/p/h632/sS5PjOqTyPtWjwges6u6RcemoPv.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/157534</profile>
+    <tmdbid>157534</tmdbid>
+  </actor>
+  <actor>
+    <name>Alex Jones</name>
+    <role>Street Prophet</role>
+    <thumb>https://image.tmdb.org/t/p/h632/opuELrqR3MAhdFp5r88UKf1iqqj.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/57970</profile>
+    <tmdbid>57970</tmdbid>
+  </actor>
+  <actor>
+    <name>Lisa Marie Newmyer</name>
+    <role>Connie</role>
+    <thumb>https://image.tmdb.org/t/p/h632/hZYFpnGsGdjaoT7YlaB9sKk83JP.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/1075540</profile>
+    <tmdbid>1075540</tmdbid>
+  </actor>
+  <actor>
+    <name>Wilbur Penn</name>
+    <role>Medical Officer #1</role>
+    <thumb>https://image.tmdb.org/t/p/h632/1hbP4j7eQxawSzzRPPgyjt3FcEB.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/584094</profile>
+    <tmdbid>584094</tmdbid>
+  </actor>
+  <actor>
+    <name>Ken Webster</name>
+    <role>Medical Officer #2</role>
+    <thumb>https://image.tmdb.org/t/p/h632/mXOFNEItJOcLecm3tf36RRJ9BYZ.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/56935</profile>
+    <tmdbid>56935</tmdbid>
+  </actor>
+  <actor>
+    <name>Hugo Perez</name>
+    <role>New Path Staff Member #1</role>
+    <profile>https://www.themoviedb.org/person/54765</profile>
+    <tmdbid>54765</tmdbid>
+  </actor>
+  <actor>
+    <name>Rommel Sulit</name>
+    <role>New Path Staff Member #2</role>
+    <profile>https://www.themoviedb.org/person/204830</profile>
+    <tmdbid>204830</tmdbid>
+  </actor>
+  <actor>
+    <name>Dameon Clarke</name>
+    <role>Mike</role>
+    <thumb>https://image.tmdb.org/t/p/h632/uExtGfwHIGGpqH9vckjp5xLnTYm.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/571230</profile>
+    <tmdbid>571230</tmdbid>
+  </actor>
+  <actor>
+    <name>Christopher Ryan</name>
+    <role>New Path Resident #1</role>
+    <profile>https://www.themoviedb.org/person/52798</profile>
+    <tmdbid>52798</tmdbid>
+  </actor>
+  <actor>
+    <name>Leila Plummer</name>
+    <role>New Path Resident #2</role>
+    <profile>https://www.themoviedb.org/person/3657756</profile>
+    <tmdbid>3657756</tmdbid>
+  </actor>
+  <actor>
+    <name>Jason Douglas</name>
+    <role>New Path Farm Manager</role>
+    <thumb>https://image.tmdb.org/t/p/h632/9vvygaziqPt23AafWHJY8TlUK8d.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/20496</profile>
+    <tmdbid>20496</tmdbid>
+  </actor>
+  <actor>
+    <name>Marco Perella</name>
+    <role>Donald</role>
+    <thumb>https://image.tmdb.org/t/p/h632/q7vwCX7FBJ05Dl6SvA7MFbt7ULo.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/994259</profile>
+    <tmdbid>994259</tmdbid>
+  </actor>
+  <actor>
+    <name>Gary Teague</name>
+    <role>Brown Bear Lodge Member (uncredited)</role>
+    <thumb>https://image.tmdb.org/t/p/h632/6krRDsrYNOq0iAl9mSC1b7fofqN.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/131427</profile>
+    <tmdbid>131427</tmdbid>
+  </actor>
+  <producer tmdbid="10950">
+    <name>Erwin Stoff</name>
+    <profile>https://www.themoviedb.org/person/10950</profile>
+  </producer>
+  <producer tmdbid="9539">
+    <name>Jonah Smith</name>
+    <profile>https://www.themoviedb.org/person/9539</profile>
+  </producer>
+  <producer tmdbid="32233">
+    <name>Tommy Pallotta</name>
+    <thumb>https://image.tmdb.org/t/p/h632/kMQjD86Hh7qD3IWB6V1l2iB717h.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/32233</profile>
+  </producer>
+  <producer tmdbid="2215">
+    <name>Denise Chamian</name>
+    <thumb>https://image.tmdb.org/t/p/h632/hLJGCOnjoIEKpXRykMU9QuRxjBs.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/2215</profile>
+  </producer>
+  <producer tmdbid="28632">
+    <name>Ben Cosgrove</name>
+    <thumb>https://image.tmdb.org/t/p/h632/6v5aKZ7EaOyNkztioiNpXpLAtlr.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/28632</profile>
+  </producer>
+  <producer tmdbid="3727">
+    <name>John Sloss</name>
+    <thumb>https://image.tmdb.org/t/p/h632/hkawHBjaKfuMER18Qs13mySGvXq.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/3727</profile>
+  </producer>
+  <producer tmdbid="1461">
+    <name>George Clooney</name>
+    <thumb>https://image.tmdb.org/t/p/h632/qCShMw6NW9dWcmCQrCl4tLNQwiC.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/1461</profile>
+  </producer>
+  <producer tmdbid="2946">
+    <name>Jennifer Fox</name>
+    <thumb>https://image.tmdb.org/t/p/h632/FssAEqIGXATykgBYtt2nSpA5Qh.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/2946</profile>
+  </producer>
+  <producer tmdbid="1884">
+    <name>Steven Soderbergh</name>
+    <thumb>https://image.tmdb.org/t/p/h632/872DPaUxTlAOhxBb70h3vaWhMvz.jpg</thumb>
+    <profile>https://www.themoviedb.org/person/1884</profile>
+  </producer>
+  <producer tmdbid="566">
+    <name>Anne Walker-McBay</name>
+    <profile>https://www.themoviedb.org/person/566</profile>
+  </producer>
+  <producer tmdbid="9537">
+    <name>Palmer West</name>
+    <profile>https://www.themoviedb.org/person/9537</profile>
+  </producer>
+  <producer tmdbid="1120145">
+    <name>Sara Johnson</name>
+    <profile>https://www.themoviedb.org/person/1120145</profile>
+  </producer>
+  <producer tmdbid="965592">
+    <name>Scout Masterson</name>
+    <profile>https://www.themoviedb.org/person/965592</profile>
+  </producer>
+  <producer tmdbid="94541">
+    <name>Susan Kirr</name>
+    <profile>https://www.themoviedb.org/person/94541</profile>
+  </producer>
+  <producer tmdbid="3874265">
+    <name>Peter Atherton</name>
+    <profile>https://www.themoviedb.org/person/3874265</profile>
+  </producer>
+  <producer tmdbid="3037507">
+    <name>Dominic Cancilla</name>
+    <profile>https://www.themoviedb.org/person/3037507</profile>
+  </producer>
+  <producer tmdbid="3874270">
+    <name>Shannon Blackburn</name>
+    <profile>https://www.themoviedb.org/person/3874270</profile>
+  </producer>
+  <producer tmdbid="5913">
+    <name>Beth Sepko</name>
+    <profile>https://www.themoviedb.org/person/5913</profile>
+  </producer>
+  <producer tmdbid="3874266">
+    <name>Dustin Weaver</name>
+    <profile>https://www.themoviedb.org/person/3874266</profile>
+  </producer>
+  <producer tmdbid="1596320">
+    <name>Morgan Miles</name>
+    <profile>https://www.themoviedb.org/person/1596320</profile>
+  </producer>
+  <producer tmdbid="958447">
+    <name>Erin Ferguson</name>
+    <profile>https://www.themoviedb.org/person/958447</profile>
+  </producer>
+  <trailer>plugin://plugin.video.youtube/?action=play_video&amp;videoid=l1-xKcf9Q4s</trailer>
+  <languages>English</languages>
+  <dateadded>2021-01-01 14:08:55</dateadded>
+  <fileinfo>
+    <streamdetails>
+      <video>
+        <codec>h264</codec>
+        <aspect>1.78</aspect>
+        <width>1920</width>
+        <height>1080</height>
+        <durationinseconds>6025</durationinseconds>
+        <stereomode/>
+      </video>
+      <audio>
+        <codec>AAC</codec>
+        <language>eng</language>
+        <channels>2</channels>
+      </audio>
+      <subtitle>
+        <language>eng</language>
+      </subtitle>
+    </streamdetails>
+  </fileinfo>
+  <writer tmdbid="564" tvdbid="311048">Richard Linklater</writer>
+  <writer tmdbid="584">Philip K. Dick</writer>
+  <tvdbid>4313</tvdbid>
+  <!--tinyMediaManager meta data-->
+  <source>BLURAY</source>
+  <edition>NONE</edition>
+  <original_filename>A.Scanner.Darkly.2006.1080p.BluRay.x264.YIFY.mp4</original_filename>
+  <user_note/>
+</movie>

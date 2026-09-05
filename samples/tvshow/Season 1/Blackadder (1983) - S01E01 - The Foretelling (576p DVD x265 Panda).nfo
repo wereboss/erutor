@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<episodedetails>
+  <plot><![CDATA[After arriving late for the Battle of Bosworth Field, Edmund kills King Richard III (whom he thinks is stealing his horse) and secures the crown for his father.]]></plot>
+  <outline />
+  <lockdata>false</lockdata>
+  <dateadded>2019-10-26 20:39:36</dateadded>
+  <title>The Foretelling</title>
+  <originaltitle>The Foretelling</originaltitle>
+  <actor>
+    <name>Rowan Atkinson</name>
+    <role>Edmund, Duke of Edinburgh</role>
+    <type>Actor</type>
+    <tmdbid>10730</tmdbid>
+    <tvdbid>274085</tvdbid>
+    <imdbid>nm0000100</imdbid>
+    <thumb>https://image.tmdb.org/t/p/original/wxTgS4SFanVKbnvu9xqOzNJWJwz.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Tony Robinson</name>
+    <role>Baldrick</role>
+    <type>Actor</type>
+    <tmdbid>87385</tmdbid>
+    <tvdbid>302285</tvdbid>
+    <thumb>https://artworks.thetvdb.com/banners/v4/actor/302285/photo/633d73b72786a.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Tim McInnerny</name>
+    <role>Lord Percy</role>
+    <type>Actor</type>
+    <tmdbid>41043</tmdbid>
+    <tvdbid>248012</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/nOLjLixEDo1xFhBmAfRLMKwB9Fv.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Brian Blessed</name>
+    <role>King Richard IV</role>
+    <type>Actor</type>
+    <tmdbid>8318</tmdbid>
+    <tvdbid>280558</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/3mLIr94V5IOA5ndY6GyqKKcyrX6.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Elspet Gray</name>
+    <role>The Queen</role>
+    <type>Actor</type>
+    <tmdbid>1229860</tmdbid>
+    <tvdbid>257358</tvdbid>
+    <thumb>https://artworks.thetvdb.com/banners/actors/48918.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Robert East</name>
+    <role>Harry Prince of Wales</role>
+    <type>Actor</type>
+    <tmdbid>1232077</tmdbid>
+    <tvdbid>415818</tvdbid>
+    <thumb>https://artworks.thetvdb.com/banners/actors/48916.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Patrick Allen</name>
+    <role>Narrator</role>
+    <type>Actor</type>
+    <tmdbid>73980</tmdbid>
+    <tvdbid>299225</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/todxXDMKU81wTUedoay5SI4A1kl.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Peter Cook</name>
+    <role>Richard III</role>
+    <type>Actor</type>
+    <tmdbid>18266</tmdbid>
+    <thumb>https://image.tmdb.org/t/p/original/wytpiTl3Wgr3T2kdMgcP88WIbLu.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Peter Benson</name>
+    <role>Henry VII</role>
+    <type>Actor</type>
+    <tmdbid>1222035</tmdbid>
+    <tvdbid>316769</tvdbid>
+    <thumb>https://image.tmdb.org/t/p/original/4wSHbIVUVI0moe4wmQbnKffGGvV.jpg</thumb>
+  </actor>
+  <actor>
+    <name>Kathleen St John</name>
+    <role>Goneril</role>
+    <type>Actor</type>
+    <tmdbid>1561590</tmdbid>
+  </actor>
+  <actor>
+    <name>Barbara Miller</name>
+    <role>Regan</role>
+    <type>Actor</type>
+    <tmdbid>1832899</tmdbid>
+  </actor>
+  <actor>
+    <name>Gretchen Franklin</name>
+    <role>Cordelia</role>
+    <type>Actor</type>
+    <tmdbid>214115</tmdbid>
+    <thumb>https://image.tmdb.org/t/p/original/5frFKcp2o7dGTLUAVmYinUU8azV.jpg</thumb>
+  </actor>
+  <director tmdbid="1684048">Martin Shardlow</director>
+  <writer tmdbid="10730" tvdbid="274085" imdbid="nm0000100">Rowan Atkinson</writer>
+  <writer tmdbid="7018">Richard Curtis</writer>
+  <credits tmdbid="10730" tvdbid="274085" imdbid="nm0000100">Rowan Atkinson</credits>
+  <credits tmdbid="7018">Richard Curtis</credits>
+  <rating>7.5</rating>
+  <year>1983</year>
+  <sorttitle>Foretelling</sorttitle>
+  <mpaa>TV-PG</mpaa>
+  <imdbid>tt0526541</imdbid>
+  <tvdbid>213420</tvdbid>
+  <tmdbid>969108</tmdbid>
+  <runtime>34</runtime>
+  <genre>Comedy</genre>
+  <studio>7 Network</studio>
+  <studio>BBC Worldwide</studio>
+  <studio>British Broadcasting Corporation (BBC)</studio>
+  <uniqueid type="tmdb">969108</uniqueid>
+  <uniqueid type="imdb">tt0526541</uniqueid>
+  <uniqueid type="tvdb">213420</uniqueid>
+  <art>
+    <poster>/Volumes/SRIPASS/Sri/Vids/Series/Blackadder/Season 1/Blackadder (1983) - S01E01 - The Foretelling (576p DVD x265 Panda)-thumb.jpg</poster>
+  </art>
+  <episode>1</episode>
+  <season>1</season>
+  <aired>1983-06-15</aired>
+  <fileinfo>
+    <streamdetails>
+      <video>
+        <codec>h264</codec>
+        <micodec>h264</micodec>
+        <bitrate>1213204</bitrate>
+        <width>720</width>
+        <height>480</height>
+        <aspect>1.5:1</aspect>
+        <aspectratio>1.5:1</aspectratio>
+        <framerate>25</framerate>
+        <language>eng</language>
+        <scantype>progressive</scantype>
+        <default>True</default>
+        <forced>False</forced>
+        <duration>33</duration>
+        <durationinseconds>2012</durationinseconds>
+      </video>
+      <audio>
+        <codec>aac</codec>
+        <micodec>aac</micodec>
+        <bitrate>124790</bitrate>
+        <language>eng</language>
+        <scantype>progressive</scantype>
+        <channels>2</channels>
+        <samplingrate>44100</samplingrate>
+        <default>True</default>
+        <forced>False</forced>
+      </audio>
+    </streamdetails>
+  </fileinfo>
+  <showtitle>Blackadder</showtitle>
+  <ratings>
+    <rating default="false" max="10" name="themoviedb">
+      <value>6.9</value>
+      <votes>12</votes>
+    </rating>
+    <rating default="false" max="10" name="default">
+      <value>7.7</value>
+      <votes>760</votes>
+    </rating>
+  </ratings>
+  <thumb>https://image.tmdb.org/t/p/original/9rZFzz8oHTC0dU7LcMXYDi5Yvbz.jpg</thumb>
+  <epbookmark />
+  <code />
+  <source>DVD</source>
+  <original_filename>Blackadder (1983) - S01E01 - The Foretelling (576p DVD x265 Panda).mp4</original_filename>
+  <user_note />
+</episodedetails>
