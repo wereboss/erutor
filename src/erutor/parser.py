@@ -157,14 +157,22 @@ class TitleParser:
 
         working_name = base_name
 
-        # 1. Extract Release Group (usually at the very end after a dash)
+        # 1. Extract Release Group (usually at the very end after a dash in scene releases)
         release_group = None
         group_match = re.search(r"-([A-Za-z0-9_]+)$", working_name)
         if group_match:
             candidate = group_match.group(1).lower()
+            # Only treat as release group if candidate is in COMMON_GROUPS or filename has technical scene indicators
+            has_scene_indicator = (
+                candidate in [g.lower() for g in COMMON_GROUPS]
+                or any(re.search(p, working_name, re.IGNORECASE) for p, _ in VIDEO_CODECS + SOURCES + RESOLUTIONS)
+                or bool(re.search(r"\b(19\d\d|20\d\d)\b", working_name))
+                or "." in working_name[: group_match.start()]
+                or "_" in working_name[: group_match.start()]
+            )
             # Verify candidate isn't a codec/source or common keyword
             not_group = any(re.search(p, candidate, re.IGNORECASE) for p, _ in VIDEO_CODECS + SOURCES + RESOLUTIONS + AUDIO_CODECS)
-            if not not_group and candidate not in ("dl", "rip", "web", "hd"):
+            if has_scene_indicator and not not_group and candidate not in ("dl", "rip", "web", "hd"):
                 release_group = group_match.group(1)
                 working_name = working_name[: group_match.start()]
         if not release_group:

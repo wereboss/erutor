@@ -124,7 +124,15 @@ def resolve_movie_interactively(
         if not user_input or user_input.lower() in ("s", "skip", "q", "quit"):
             return None
 
-        if user_input.lower().startswith("tt") or user_input.lower().startswith("imdb:") or user_input.lower().startswith("tmdb:"):
+        low = user_input.lower()
+        if (
+            low.startswith("tt")
+            or low.startswith("imdb:")
+            or low.startswith("tmdb:")
+            or "imdb.com" in low
+            or "themoviedb.org" in low
+            or (low.isdigit() and len(low) >= 3)
+        ):
             curr_id = user_input
             curr_query = None
             curr_year = None
@@ -197,11 +205,15 @@ def resolve_tvshow_interactively(
         if not user_input or user_input.lower() in ("s", "skip", "q", "quit"):
             return None
 
+        low = user_input.lower()
         if (
-            user_input.lower().startswith("tt")
-            or user_input.lower().startswith("tvdb:")
-            or user_input.lower().startswith("imdb:")
-            or user_input.isdigit()
+            low.startswith("tt")
+            or low.startswith("tvdb:")
+            or low.startswith("thetvdb:")
+            or low.startswith("imdb:")
+            or "thetvdb.com" in low
+            or "imdb.com" in low
+            or low.isdigit()
         ):
             curr_id = user_input
             curr_query = None

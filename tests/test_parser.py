@@ -77,3 +77,10 @@ def test_parse_4k_uhd_hevc():
     assert parsed.resolution == "2160p"
     assert parsed.video_codec == "x265"
     assert parsed.release_group == "SWTYBLZ"
+
+
+def test_parse_hyphenated_title_preserves_words():
+    parsed = TitleParser.parse("Agatha Christie-Poirot")
+    assert parsed.title == "Agatha Christie-Poirot"
+    assert parsed.release_group is None
+

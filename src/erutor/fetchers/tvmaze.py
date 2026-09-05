@@ -5,9 +5,11 @@ from __future__ import annotations
 import re
 from typing import Optional
 
+import time
 import httpx
+from rich.console import Console
 
-from erutor.fetchers.base import BaseFetcher
+from erutor.fetchers.base import BaseFetcher, get_http_client
 from erutor.models import (
     EpisodeMetadata,
     MovieMetadata,
@@ -17,6 +19,8 @@ from erutor.models import (
     SeasonMetadata,
     TVShowMetadata,
 )
+
+console = Console(stderr=True)
 
 
 def _strip_html(html_str: Optional[str]) -> Optional[str]:
@@ -33,10 +37,52 @@ class TVMazeFetcher(BaseFetcher):
     BASE_URL = "https://api.tvmaze.com"
 
     def __init__(self, client: Optional[httpx.Client] = None):
-        self.client = client or httpx.Client(
-            headers={"User-Agent": "Erutor/0.1 (https://github.com/erutor)"},
-            timeout=15.0,
-        )
+        self.client = client or get_http_client(timeout=15.0)
+
+    def _safe_get(self, url: str, params: Optional[dict] = None, max_retries: int = 2) -> Optional[httpx.Response]:
+        """Perform a GET request with automatic retry on 429 rate limit."""
+        for attempt in range(max_retries + 1):
+            try:
+                resp = self.client.get(url, params=params, follow_redirects=True)
+                if resp.status_code == 429:
+                    # TVMaze rate limit: sleep and retry
+                    time.sleep(1.5)
+                    continue
+                return resp
+            except Exception as e:
+                if attempt == max_retries:
+                    console.print(f"[dim red](TVMaze connection warning: {e})[/dim red]")
+                    return None
+                time.sleep(1.0)
+        return None
+
+    def _resolve_title_via_wikidata(self, imdb_or_tvdb: str) -> Optional[str]:
+        """Fallback helper to resolve canonical show title from Wikidata statements."""
+        is_imdb = imdb_or_tvdb.lower().startswith("tt")
+        prop = "P345" if is_imdb else "P4835"
+        val = imdb_or_tvdb.lower() if is_imdb else imdb_or_tvdb
+        url = "https://www.wikidata.org/w/api.php"
+        try:
+            resp = self._safe_get(
+                url,
+                params={
+                    "action": "query",
+                    "list": "search",
+                    "srsearch": f"haswbstatement:{prop}={val}",
+                    "format": "json",
+                },
+            )
+            if resp and resp.status_code == 200:
+                hits = resp.json().get("query", {}).get("search", [])
+                if hits:
+                    qid = hits[0].get("title")
+                    ent_resp = self._safe_get(f"https://www.wikidata.org/wiki/Special:EntityData/{qid}.json")
+                    if ent_resp and ent_resp.status_code == 200:
+                        ent = ent_resp.json().get("entities", {}).get(qid, {})
+                        return ent.get("labels", {}).get("en", {}).get("value")
+        except Exception:
+            pass
+        return None
 
     def search_movie(self, query: str, year: Optional[int] = None) -> list[SearchResult]:
         # TVMaze is TV shows only
@@ -47,9 +93,11 @@ class TVMazeFetcher(BaseFetcher):
 
     def search_tv(self, query: str, year: Optional[int] = None) -> list[SearchResult]:
         url = f"{self.BASE_URL}/search/shows"
+        resp = self._safe_get(url, params={"q": query})
+        if not resp or resp.status_code != 200:
+            return []
+
         try:
-            resp = self.client.get(url, params={"q": query})
-            resp.raise_for_status()
             data = resp.json()
         except Exception:
             return []
@@ -81,53 +129,80 @@ class TVMazeFetcher(BaseFetcher):
                     source=self.name,
                 )
             )
+
+        if not results and re.search(r"[-:._]+", query):
+            clean_query = re.sub(r"[-:._]+", " ", query).strip()
+            if clean_query.lower() != query.lower():
+                return self.search_tv(clean_query, year=year)
+
         return results
 
     def get_tvshow(self, id: str) -> Optional[TVShowMetadata]:
-        clean_id = id.strip()
-        # Handle explicit prefixes
-        if clean_id.lower().startswith("tvdb:") or clean_id.lower().startswith("thetvdb:"):
-            tvdb_num = clean_id.split(":")[-1].strip()
-            try:
-                resp = self.client.get(f"{self.BASE_URL}/lookup/shows", params={"thetvdb": tvdb_num}, follow_redirects=True)
-                if resp.status_code == 200:
-                    clean_id = str(resp.json().get("id"))
+        clean_id = id.strip().strip("'\"").rstrip("/")
+
+        # 1. Check for IMDb ID in query (tt\d+)
+        imdb_match = re.search(r"(tt\d+)", clean_id, re.IGNORECASE)
+        # 2. Check for TVDB ID prefix or URL
+        tvdb_match = re.search(r"(?:tvdb|thetvdb):(\d+)", clean_id, re.IGNORECASE)
+        if not tvdb_match:
+            tvdb_match = re.search(r"thetvdb\.com/(?:dereferrer/)?(?:series/|movies/)?(\d+)", clean_id, re.IGNORECASE)
+
+        lookup_url = f"{self.BASE_URL}/lookup/shows"
+
+        if tvdb_match:
+            tvdb_num = tvdb_match.group(1)
+            resp = self._safe_get(lookup_url, params={"thetvdb": tvdb_num})
+            if resp and resp.status_code == 200:
+                clean_id = str(resp.json().get("id"))
+            else:
+                # Fallback via Wikidata to find title
+                resolved_title = self._resolve_title_via_wikidata(tvdb_num)
+                if resolved_title:
+                    searched = self.search_tv(resolved_title)
+                    if searched:
+                        clean_id = searched[0].id
+                    else:
+                        return None
                 else:
                     return None
-            except Exception:
-                return None
-        elif clean_id.lower().startswith("imdb:"):
-            clean_id = clean_id.split(":")[-1].strip()
 
-        # If clean_id starts with 'tt' (IMDb ID), use TVMaze lookup
-        if clean_id.startswith("tt"):
-            lookup_url = f"{self.BASE_URL}/lookup/shows"
-            try:
-                resp = self.client.get(lookup_url, params={"imdb": clean_id}, follow_redirects=True)
-                resp.raise_for_status()
-                show_data = resp.json()
-                clean_id = str(show_data.get("id"))
-            except Exception:
-                return None
+        elif imdb_match:
+            imdb_id = imdb_match.group(1).lower()
+            resp = self._safe_get(lookup_url, params={"imdb": imdb_id})
+            if resp and resp.status_code == 200:
+                clean_id = str(resp.json().get("id"))
+            else:
+                # Fallback via Wikidata to find title
+                resolved_title = self._resolve_title_via_wikidata(imdb_id)
+                if resolved_title:
+                    searched = self.search_tv(resolved_title)
+                    if searched:
+                        clean_id = searched[0].id
+                    else:
+                        return None
+                else:
+                    return None
 
+        elif clean_id.isdigit():
+            # Could be a direct TVMaze show ID, or a raw TheTVDB ID
+            # First try as TVMaze ID
+            url = f"{self.BASE_URL}/shows/{clean_id}"
+            test_resp = self._safe_get(url)
+            if not test_resp or test_resp.status_code == 404:
+                # Try as TVDB ID
+                lookup_resp = self._safe_get(lookup_url, params={"thetvdb": clean_id})
+                if lookup_resp and lookup_resp.status_code == 200:
+                    clean_id = str(lookup_resp.json().get("id"))
+
+        # Fetch full show details with embedded episodes, seasons, cast
         url = f"{self.BASE_URL}/shows/{clean_id}"
-        data = None
-        try:
-            resp = self.client.get(url, params={"embed[]": ["episodes", "cast", "seasons"]})
-            if resp.status_code == 200:
-                data = resp.json()
-            elif resp.status_code == 404 and clean_id.isdigit():
-                # Fallback: maybe clean_id was a TheTVDB ID
-                lookup_resp = self.client.get(f"{self.BASE_URL}/lookup/shows", params={"thetvdb": clean_id}, follow_redirects=True)
-                if lookup_resp.status_code == 200:
-                    resolved_id = str(lookup_resp.json().get("id"))
-                    retry_resp = self.client.get(f"{self.BASE_URL}/shows/{resolved_id}", params={"embed[]": ["episodes", "cast", "seasons"]})
-                    if retry_resp.status_code == 200:
-                        data = retry_resp.json()
-        except Exception:
+        resp = self._safe_get(url, params={"embed[]": ["episodes", "cast", "seasons"]})
+        if not resp or resp.status_code != 200:
             return None
 
-        if not data:
+        try:
+            data = resp.json()
+        except Exception:
             return None
 
 

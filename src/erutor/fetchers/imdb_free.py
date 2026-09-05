@@ -8,7 +8,7 @@ from typing import Optional
 
 import httpx
 
-from erutor.fetchers.base import BaseFetcher
+from erutor.fetchers.base import BaseFetcher, get_http_client
 from erutor.models import MovieMetadata, Person, Rating, SearchResult, TVShowMetadata
 
 
@@ -18,16 +18,13 @@ class FreeMovieFetcher(BaseFetcher):
     name = "imdb_free"
 
     def __init__(self, client: Optional[httpx.Client] = None):
-        self.client = client or httpx.Client(
-            headers={"User-Agent": "Erutor/0.1 (https://github.com/erutor)"},
-            timeout=15.0,
-        )
+        self.client = client or get_http_client(timeout=15.0)
 
     def search_movie(self, query: str, year: Optional[int] = None) -> list[SearchResult]:
         quoted = urllib.parse.quote(query.lower())
         url = f"https://v3.sg.media-imdb.com/suggestion/x/{quoted}.json"
         try:
-            resp = self.client.get(url)
+            resp = self.client.get(url, follow_redirects=True)
             resp.raise_for_status()
             data = resp.json().get("d", [])
         except Exception:
@@ -72,19 +69,25 @@ class FreeMovieFetcher(BaseFetcher):
         return results
 
     def get_movie(self, id: str) -> Optional[MovieMetadata]:
-        # If id starts with tt, search IMDb suggest for exact item
+        clean_id = id.strip().strip("'\"").rstrip("/")
+        # Extract IMDb ID if present
+        match = re.search(r"(tt\d+)", clean_id, re.IGNORECASE)
+        if match:
+            clean_id = match.group(1).lower()
+
         poster_url = None
         title = None
         year = None
         stars_list: list[str] = []
 
-        # Fetch suggest info to get accurate title, year, poster
+        # 1. Fetch suggest info to get accurate title, year, poster
+        first_char = clean_id[0] if clean_id else "t"
         try:
-            resp = self.client.get(f"https://v3.sg.media-imdb.com/suggestion/x/{id}.json")
+            resp = self.client.get(f"https://v3.sg.media-imdb.com/suggestion/{first_char}/{clean_id}.json", follow_redirects=True)
             if resp.status_code == 200:
                 data = resp.json().get("d", [])
                 for item in data:
-                    if item.get("id") == id:
+                    if str(item.get("id", "")).lower() == clean_id:
                         title = item.get("l")
                         year = item.get("y")
                         stars_str = item.get("s")
@@ -95,6 +98,39 @@ class FreeMovieFetcher(BaseFetcher):
                         break
         except Exception:
             pass
+
+        # 2. If title still not resolved, query Wikidata by IMDb statement (P345)
+        if not title and clean_id.startswith("tt"):
+            try:
+                wiki_search = self.client.get(
+                    "https://www.wikidata.org/w/api.php",
+                    params={
+                        "action": "query",
+                        "list": "search",
+                        "srsearch": f"haswbstatement:P345={clean_id}",
+                        "format": "json",
+                    },
+                    follow_redirects=True,
+                )
+                if wiki_search.status_code == 200:
+                    hits = wiki_search.json().get("query", {}).get("search", [])
+                    if hits:
+                        q_id = hits[0].get("title")
+                        ent_resp = self.client.get(
+                            f"https://www.wikidata.org/wiki/Special:EntityData/{q_id}.json",
+                            follow_redirects=True,
+                        )
+                        if ent_resp.status_code == 200:
+                            entity = ent_resp.json().get("entities", {}).get(q_id, {})
+                            title = entity.get("labels", {}).get("en", {}).get("value")
+                            pub_claims = entity.get("claims", {}).get("P577", [])
+                            if pub_claims:
+                                date_str = pub_claims[0].get("mainsnak", {}).get("datavalue", {}).get("value", {}).get("time", "")
+                                m_year = re.search(r"\+(\d{4})", date_str)
+                                if m_year:
+                                    year = int(m_year.group(1))
+            except Exception:
+                pass
 
         if not title:
             return None
@@ -119,13 +155,13 @@ class FreeMovieFetcher(BaseFetcher):
             premiered=f"{year}-01-01" if year else None,
             plot=wiki_plot,
             outline=wiki_plot,
-            imdb_id=id,
+            imdb_id=clean_id,
             actors=actors,
             directors=directors,
             writers=writers,
             genres=wiki_genres,
             posters=posters,
-            ratings=[Rating(name="imdb", value=7.5, is_default=True)] if id else [],
+            ratings=[Rating(name="imdb", value=7.5, is_default=True)] if clean_id else [],
         )
 
     def _fetch_wikipedia_info(

@@ -6,6 +6,43 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from erutor.models import MovieMetadata, SearchResult, TVShowMetadata
+import certifi
+import httpx
+
+
+def get_http_client(
+    timeout: float = 15.0,
+    headers: Optional[dict[str, str]] = None,
+    follow_redirects: bool = True,
+) -> httpx.Client:
+    """Create a standardized HTTP client with certifi SSL verification and browser UA."""
+    default_headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/124.0.0.0 Safari/537.36"
+        ),
+        "Accept": "application/json, text/html, */*",
+        "Accept-Language": "en-US,en;q=0.9",
+    }
+    if headers:
+        default_headers.update(headers)
+
+    ca_bundle = certifi.where()
+    try:
+        return httpx.Client(
+            timeout=timeout,
+            headers=default_headers,
+            verify=ca_bundle,
+            follow_redirects=follow_redirects,
+        )
+    except Exception:
+        return httpx.Client(
+            timeout=timeout,
+            headers=default_headers,
+            follow_redirects=follow_redirects,
+        )
+
 
 
 class BaseFetcher(ABC):
