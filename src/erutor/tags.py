@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import urllib.parse
 from typing import Optional
 
 import httpx
@@ -170,10 +171,128 @@ def clean_wiki_category(cat: str, media_title: Optional[str] = None) -> Optional
     if re.search(r"\(.*(?:channel|network)\)|television dramas$|adapted into|cultural depictions", cleaned, re.IGNORECASE):
         return None
 
-    if media_title and cleaned == media_title.lower():
-        return None
+    if media_title:
+        m_lower = media_title.lower().strip()
+        m_no_the = re.sub(r"^the\s+", "", m_lower).strip()
+        if cleaned == m_lower or cleaned == m_no_the:
+            return None
 
     return clean_tag(cleaned)
+
+
+def resolve_wikipedia_page_title(
+    client: httpx.Client,
+    title: str,
+    year: Optional[int] = None,
+    imdb_id: Optional[str] = None,
+    tvdb_id: Optional[str] = None,
+    media_type: str = "movie",
+) -> Optional[str]:
+    """Resolve the exact canonical Wikipedia article title via Wikidata statement or opensearch."""
+    # 1. Direct resolution via Wikidata IMDb statement (P345)
+    if imdb_id:
+        m = re.search(r"(tt\d+)", imdb_id, re.IGNORECASE)
+        if m:
+            clean_imdb = m.group(1).lower()
+            try:
+                r = client.get(
+                    "https://www.wikidata.org/w/api.php",
+                    params={
+                        "action": "query",
+                        "list": "search",
+                        "srsearch": f"haswbstatement:P345={clean_imdb}",
+                        "format": "json",
+                    },
+                )
+                if r.status_code == 200:
+                    hits = r.json().get("query", {}).get("search", [])
+                    if hits:
+                        qid = hits[0].get("title")
+                        ent_r = client.get(
+                            "https://www.wikidata.org/w/api.php",
+                            params={
+                                "action": "wbgetentities",
+                                "ids": qid,
+                                "props": "sitelinks",
+                                "sitefilter": "enwiki",
+                                "format": "json",
+                            },
+                        )
+                        if ent_r.status_code == 200:
+                            sitelinks = ent_r.json().get("entities", {}).get(qid, {}).get("sitelinks", {})
+                            if "enwiki" in sitelinks and sitelinks["enwiki"].get("title"):
+                                return sitelinks["enwiki"]["title"]
+            except Exception:
+                pass
+
+    # 2. Direct resolution via Wikidata TVDB statement (P4835)
+    if tvdb_id:
+        clean_tvdb = re.sub(r"\D", "", tvdb_id)
+        if clean_tvdb:
+            try:
+                r = client.get(
+                    "https://www.wikidata.org/w/api.php",
+                    params={
+                        "action": "query",
+                        "list": "search",
+                        "srsearch": f"haswbstatement:P4835={clean_tvdb}",
+                        "format": "json",
+                    },
+                )
+                if r.status_code == 200:
+                    hits = r.json().get("query", {}).get("search", [])
+                    if hits:
+                        qid = hits[0].get("title")
+                        ent_r = client.get(
+                            "https://www.wikidata.org/w/api.php",
+                            params={
+                                "action": "wbgetentities",
+                                "ids": qid,
+                                "props": "sitelinks",
+                                "sitefilter": "enwiki",
+                                "format": "json",
+                            },
+                        )
+                        if ent_r.status_code == 200:
+                            sitelinks = ent_r.json().get("entities", {}).get(qid, {}).get("sitelinks", {})
+                            if "enwiki" in sitelinks and sitelinks["enwiki"].get("title"):
+                                return sitelinks["enwiki"]["title"]
+            except Exception:
+                pass
+
+    # 3. Fallback to candidate opensearch terms
+    search_terms: list[str] = []
+    if media_type == "movie":
+        if year:
+            search_terms.append(f"{title} ({year} film)")
+        search_terms.append(f"{title} (film)")
+        if year:
+            search_terms.append(f"{title} {year} film")
+        search_terms.append(f"{title} film")
+        search_terms.append(title)
+    else:
+        if year:
+            search_terms.append(f"{title} ({year} TV series)")
+        search_terms.append(f"{title} (TV series)")
+        if year:
+            search_terms.append(f"{title} {year} TV series")
+        search_terms.append(f"{title} TV series")
+        search_terms.append(f"{title} (series)")
+        search_terms.append(f"{title} series")
+        search_terms.append(title)
+
+    for term in search_terms:
+        try:
+            search_url = f"https://en.wikipedia.org/w/api.php?action=opensearch&search={urllib.parse.quote(term)}&limit=3&format=json"
+            r = client.get(search_url)
+            if r.status_code == 200:
+                candidates = r.json()[1]
+                if candidates:
+                    return candidates[0]
+        except Exception:
+            continue
+
+    return None
 
 
 def fetch_wikipedia_categories(

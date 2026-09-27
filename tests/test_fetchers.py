@@ -268,3 +268,101 @@ def test_tmdb_tags():
     assert show is not None
     assert show.tags == ["drug dealer", "cancer"]
 
+
+def test_imdb_free_fallback_tags_when_wikipedia_empty():
+    mock_client = MagicMock(spec=httpx.Client)
+
+    def mock_get(url, *args, **kwargs):
+        resp = MagicMock()
+        resp.status_code = 200
+        if "suggestion" in url:
+            resp.json.return_value = {
+                "d": [{"id": "tt1234567", "l": "Obscure Indie Movie", "y": 1995, "s": "Actor A, Actor B"}]
+            }
+        else:
+            # Wikipedia / Wikidata returns nothing
+            resp.status_code = 404
+            resp.json.return_value = {}
+        return resp
+
+    mock_client.get.side_effect = mock_get
+
+    fetcher = FreeMovieFetcher(client=mock_client)
+    movie = fetcher.get_movie("tt1234567")
+    assert movie is not None
+    assert "Feature Film" in movie.tags
+    assert "1990s" in movie.tags
+    assert len(movie.tags) >= 2
+
+
+def test_tmdb_fallback_tags_when_keywords_empty():
+    from erutor.fetchers.tmdb import TMDBFetcher
+
+    mock_client = MagicMock(spec=httpx.Client)
+
+    def mock_get(url, *args, **kwargs):
+        resp = MagicMock()
+        resp.status_code = 200
+        if "/movie/" in url:
+            resp.json.return_value = {
+                "id": 9999,
+                "title": "Quiet Drama",
+                "release_date": "2015-05-01",
+                "genres": [{"name": "Drama"}, {"name": "Mystery"}],
+                "keywords": {"keywords": []},  # No keywords returned
+            }
+        elif "/tv/" in url:
+            resp.json.return_value = {
+                "id": 8888,
+                "name": "Classic Sitcom",
+                "first_air_date": "1985-09-14",
+                "genres": [{"name": "Comedy"}],
+                "production_companies": [{"name": "NBC Studios"}],
+                "networks": [],
+                "keywords": {"results": []},  # No keywords returned
+            }
+        else:
+            resp.json.return_value = {}
+        return resp
+
+    mock_client.get.side_effect = mock_get
+
+    fetcher = TMDBFetcher(api_key="test_key", client=mock_client)
+    movie = fetcher.get_movie("9999")
+    assert movie is not None
+    assert "Drama" in movie.tags
+    assert "Mystery" in movie.tags
+    assert "2010s" in movie.tags
+    assert "Feature Film" in movie.tags
+
+    show = fetcher.get_tvshow("8888")
+    assert show is not None
+    assert "Comedy" in show.tags
+    assert "1980s" in show.tags
+    assert "NBC Studios" in show.tags
+
+
+def test_omdb_movie_tags():
+    from erutor.fetchers.omdb import OMDbFetcher
+
+    mock_client = MagicMock(spec=httpx.Client)
+    mock_resp = MagicMock()
+    mock_resp.status_code = 200
+    mock_resp.json.return_value = {
+        "Response": "True",
+        "Title": "The Godfather",
+        "Year": "1972",
+        "Genre": "Crime, Drama",
+        "Type": "movie",
+        "imdbID": "tt0068646",
+    }
+    mock_client.get.return_value = mock_resp
+
+    fetcher = OMDbFetcher(api_key="test_key", client=mock_client)
+    movie = fetcher.get_movie("tt0068646")
+    assert movie is not None
+    assert "Crime" in movie.tags
+    assert "Drama" in movie.tags
+    assert "1970s" in movie.tags
+    assert "Feature Film" in movie.tags
+

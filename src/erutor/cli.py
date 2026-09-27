@@ -289,12 +289,17 @@ def movie_cmd(
         saved = manager.save_movie(movie, target_dir, force=force, video_filename=video_filename)
 
     # Display clean summary panel
+    tag_desc = (
+        f"{len(movie.tags)} tags ({', '.join(movie.tags[:8])}...)"
+        if len(movie.tags) > 8
+        else (f"{len(movie.tags)} tags ({', '.join(movie.tags)})" if movie.tags else "None")
+    )
     details_text = (
         f"[bold]Title:[/bold] {movie.title}\n"
         f"[bold]Year:[/bold] {movie.year or 'N/A'}\n"
         f"[bold]IMDb ID:[/bold] {movie.imdb_id or 'N/A'}\n"
         f"[bold]Genres:[/bold] {', '.join(movie.genres) if movie.genres else 'N/A'}\n"
-        f"[bold]Tags:[/bold] {', '.join(movie.tags[:8]) if movie.tags else 'None'}\n"
+        f"[bold]Tags:[/bold] {tag_desc}\n"
         f"[bold]Output Dir:[/bold] {target_dir}\n"
         f"[bold]Generated NFO:[/bold] {saved.get('nfo', 'N/A')}\n"
         f"[bold]Poster:[/bold] {saved.get('poster', 'Not downloaded')}"
@@ -365,12 +370,17 @@ def tv_cmd(
     with console.status(f"[bold green]Writing NFOs and assets to {target_dir}...[/bold green]"):
         saved = manager.save_tvshow(show, target_dir, force=force)
 
+    tag_desc = (
+        f"{len(show.tags)} tags ({', '.join(show.tags[:8])}...)"
+        if len(show.tags) > 8
+        else (f"{len(show.tags)} tags ({', '.join(show.tags)})" if show.tags else "None")
+    )
     summary_text = (
         f"[bold]Show:[/bold] {show.title} ({show.year or 'N/A'})\n"
         f"[bold]IMDb ID:[/bold] {show.imdb_id or 'N/A'}\n"
         f"[bold]TVDB ID:[/bold] {show.tvdb_id or 'N/A'}\n"
         f"[bold]Genres:[/bold] {', '.join(show.genres) if show.genres else 'N/A'}\n"
-        f"[bold]Tags:[/bold] {', '.join(show.tags[:8]) if show.tags else 'None'}\n"
+        f"[bold]Tags:[/bold] {tag_desc}\n"
         f"[bold]Seasons:[/bold] {len(show.seasons)}\n"
         f"[bold]Episodes:[/bold] {len(show.episodes)}\n"
         f"[bold]Total NFO files written:[/bold] {len(saved['nfo'])}\n"
@@ -467,6 +477,7 @@ def scan_cmd(
     manager = ErutorManager(config)
 
     total_nfo = 0
+    total_tags = 0
     total_images = 0
     total_skipped = 0
     total_items = len(items)
@@ -500,14 +511,19 @@ def scan_cmd(
             new_nfo = 1 if "nfo" in saved else 0
             new_img = (1 if "poster" in saved else 0) + (1 if "fanart" in saved else 0)
             skip_count = len(saved.get("skipped", []))
+            tag_count = len(movie.tags)
             total_nfo += new_nfo
             total_images += new_img
             total_skipped += skip_count
+            if new_nfo:
+                total_tags += tag_count
 
             # Immediate progress confirmation with counts
             updates = []
             if new_nfo:
                 updates.append(f"1 NFO ({saved['nfo'].name})")
+                if tag_count:
+                    updates.append(f"{tag_count} Tags")
             if "poster" in saved:
                 updates.append("poster.jpg")
             if "fanart" in saved:
@@ -518,7 +534,7 @@ def scan_cmd(
                 if skip_count:
                     msg += f" [dim]({skip_count} preserved)[/dim]"
             else:
-                msg = f"[bold blue]ℹ[/bold blue] [bold cyan][{idx}/{total_items}][/bold cyan] [bold white]🎬 Movie:[/bold white] [bold]{movie.title}[/bold] ({movie.year or 'N/A'}) ── [dim]All files already up to date ({skip_count} preserved)[/dim]"
+                msg = f"[bold blue]ℹ[/bold blue] [bold cyan][{idx}/{total_items}][/bold cyan] [bold white]🎬 Movie:[/bold white] [bold]{movie.title}[/bold] ({movie.year or 'N/A'}) ── [dim]All files already up to date ({tag_count} tags available, {skip_count} preserved)[/dim]"
             console.print(msg)
 
         elif item.media_type == "tv":
@@ -562,14 +578,19 @@ def scan_cmd(
             nfo_count = len(saved.get("nfo", []))
             img_count = len(saved.get("images", []))
             skip_count = len(saved.get("skipped", []))
+            tag_count = len(show.tags)
             total_nfo += nfo_count
             total_images += img_count
             total_skipped += skip_count
+            if nfo_count:
+                total_tags += tag_count
 
             # Immediate progress confirmation with counts
             updates = []
             if nfo_count:
                 updates.append(f"{nfo_count} NFOs")
+                if tag_count:
+                    updates.append(f"{tag_count} Tags")
             if img_count:
                 updates.append(f"{img_count} images")
 
@@ -578,12 +599,13 @@ def scan_cmd(
                 if skip_count:
                     msg += f" [dim]({skip_count} preserved)[/dim]"
             else:
-                msg = f"[bold blue]ℹ[/bold blue] [bold cyan][{idx}/{total_items}][/bold cyan] [bold white]📺 TV Series:[/bold white] [bold]{show.title}[/bold] ({show.year or 'N/A'}) ── [dim]All files already up to date ({skip_count} preserved)[/dim]"
+                msg = f"[bold blue]ℹ[/bold blue] [bold cyan][{idx}/{total_items}][/bold cyan] [bold white]📺 TV Series:[/bold white] [bold]{show.title}[/bold] ({show.year or 'N/A'}) ── [dim]All files already up to date ({tag_count} tags available, {skip_count} preserved)[/dim]"
             console.print(msg)
 
     summary_text = (
         f"[bold]Total Media Items Scanned:[/bold] {total_items}\n"
         f"[bold]New NFO Files Written:[/bold] {total_nfo}\n"
+        f"[bold]Total Metadata Tags Generated:[/bold] {total_tags}\n"
         f"[bold]New Images Saved:[/bold] {total_images}\n"
         f"[bold]Existing Files Preserved (Skipped):[/bold] {total_skipped}"
     )

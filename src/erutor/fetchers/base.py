@@ -18,9 +18,7 @@ def get_http_client(
     """Create a standardized HTTP client with certifi SSL verification and browser UA."""
     default_headers = {
         "User-Agent": (
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/124.0.0.0 Safari/537.36"
+            "Erutor/0.1.1 (https://github.com/wereboss/erutor; media-metadata-tool)"
         ),
         "Accept": "application/json, text/html, */*",
         "Accept-Language": "en-US,en;q=0.9",

@@ -16,6 +16,7 @@ from erutor.models import (
     SeasonMetadata,
     TVShowMetadata,
 )
+from erutor.tags import deduplicate_tags
 
 
 class TMDBFetcher(BaseFetcher):
@@ -114,9 +115,17 @@ class TMDBFetcher(BaseFetcher):
         studios = [c["name"] for c in data.get("production_companies", []) if "name" in c]
         countries = [c["name"] for c in data.get("production_countries", []) if "name" in c]
 
-        # Extract tags from TMDB keywords
+        # Extract tags from TMDB keywords or fallback to baseline genres/decade/format
         raw_keywords = data.get("keywords", {}).get("keywords", [])
-        tags = [kw["name"] for kw in raw_keywords if kw.get("name")]
+        kw_tags = [kw["name"] for kw in raw_keywords if kw.get("name")]
+        if kw_tags:
+            tags = deduplicate_tags(kw_tags)
+        else:
+            base_tags = list(genres)
+            if year:
+                base_tags.append(f"{year // 10 * 10}s")
+            base_tags.append("Feature Film")
+            tags = deduplicate_tags(base_tags)
 
         external_ids = data.get("external_ids", {})
         imdb_id = external_ids.get("imdb_id") or data.get("imdb_id")
@@ -281,9 +290,18 @@ class TMDBFetcher(BaseFetcher):
         imdb_id = external_ids.get("imdb_id")
         tvdb_id = str(external_ids.get("tvdb_id")) if external_ids.get("tvdb_id") else None
 
-        # Tags from TMDB keywords
+        # Tags from TMDB keywords or fallback to baseline genres/studios/decade
         raw_keywords = data.get("keywords", {}).get("results", [])
-        tags = [kw["name"] for kw in raw_keywords if kw.get("name")]
+        kw_tags = [kw["name"] for kw in raw_keywords if kw.get("name")]
+        if kw_tags:
+            tags = deduplicate_tags(kw_tags)
+        else:
+            base_tags = list(genres)
+            if year:
+                base_tags.append(f"{year // 10 * 10}s")
+            for s in studios:
+                base_tags.append(s)
+            tags = deduplicate_tags(base_tags)
 
         # Cast
         actors: list[Person] = []

@@ -20,7 +20,7 @@ from erutor.models import (
     SeasonMetadata,
     TVShowMetadata,
 )
-from erutor.tags import deduplicate_tags, fetch_wikipedia_categories
+from erutor.tags import deduplicate_tags, fetch_wikipedia_categories, resolve_wikipedia_page_title
 
 console = Console(stderr=True)
 
@@ -86,28 +86,22 @@ class TVMazeFetcher(BaseFetcher):
             pass
         return None
 
-    def _fetch_tv_tags(self, title: str, year: Optional[int] = None) -> list[str]:
+    def _fetch_tv_tags(
+        self,
+        title: str,
+        year: Optional[int] = None,
+        imdb_id: Optional[str] = None,
+        tvdb_id: Optional[str] = None,
+    ) -> list[str]:
         """Fetch thematic tags from Wikipedia categories for a TV show."""
-        search_terms = []
-        if year:
-            search_terms.append(f"{title} {year} TV series")
-        search_terms.append(f"{title} TV series")
-        search_terms.append(f"{title} series")
-        search_terms.append(title)
-
-        page_title = None
-        for term in search_terms:
-            search_url = f"https://en.wikipedia.org/w/api.php?action=opensearch&search={urllib.parse.quote(term)}&limit=3&format=json"
-            try:
-                resp = self._safe_get(search_url)
-                if resp and resp.status_code == 200:
-                    candidates = resp.json()[1]
-                    if candidates:
-                        page_title = candidates[0]
-                        break
-            except Exception:
-                continue
-
+        page_title = resolve_wikipedia_page_title(
+            self.client,
+            title,
+            year=year,
+            imdb_id=imdb_id,
+            tvdb_id=tvdb_id,
+            media_type="tv",
+        )
         if not page_title:
             return []
 
@@ -358,6 +352,8 @@ class TVMazeFetcher(BaseFetcher):
         show_type = data.get("type")
         if show_type:
             base_tags.append(show_type)
+        if year:
+            base_tags.append(f"{year // 10 * 10}s")
         language = data.get("language")
         if language:
             if language.lower() == "japanese" and (show_type == "Animation" or "Anime" in genres):
@@ -366,9 +362,11 @@ class TVMazeFetcher(BaseFetcher):
                 base_tags.append(language)
         for s in studios:
             base_tags.append(s)
+        for g in genres:
+            base_tags.append(g)
 
         # Enrich with Wikipedia categories
-        wiki_tags = self._fetch_tv_tags(title, year)
+        wiki_tags = self._fetch_tv_tags(title, year, imdb_id=imdb_id, tvdb_id=tvdb_id)
         all_tags = deduplicate_tags(base_tags + wiki_tags)
 
         # Parse Episodes

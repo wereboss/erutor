@@ -9,6 +9,7 @@ import httpx
 
 from erutor.fetchers.base import BaseFetcher
 from erutor.models import MovieMetadata, Person, Rating, SearchResult, TVShowMetadata
+from erutor.tags import deduplicate_tags
 
 
 class OMDbFetcher(BaseFetcher):
@@ -132,6 +133,11 @@ class OMDbFetcher(BaseFetcher):
         tags = []
         if data.get("Type") and data.get("Type") != "N/A":
             tags.append(data.get("Type").lower())
+        tags.extend(genres)
+        if year:
+            tags.append(f"{year // 10 * 10}s")
+        tags.append("Feature Film")
+        tags = deduplicate_tags(tags)
 
         return MovieMetadata(
             title=title,

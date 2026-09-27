@@ -10,7 +10,7 @@ import httpx
 
 from erutor.fetchers.base import BaseFetcher, get_http_client
 from erutor.models import MovieMetadata, Person, Rating, SearchResult, TVShowMetadata
-from erutor.tags import deduplicate_tags, fetch_wikipedia_categories
+from erutor.tags import deduplicate_tags, fetch_wikipedia_categories, resolve_wikipedia_page_title
 
 
 class FreeMovieFetcher(BaseFetcher):
@@ -137,7 +137,10 @@ class FreeMovieFetcher(BaseFetcher):
             return None
 
         # Fetch Wikipedia summary and categories for rich plot, director, writer, genres, tags
-        wiki_plot, wiki_director, wiki_writer, wiki_genres, wiki_poster, wiki_tags = self._fetch_wikipedia_info(title, year)
+        # Fetch Wikipedia summary and categories for rich plot, director, writer, genres, tags
+        wiki_plot, wiki_director, wiki_writer, wiki_genres, wiki_poster, wiki_tags = self._fetch_wikipedia_info(
+            title, year, imdb_id=clean_id
+        )
 
         actors = [Person(name=star, person_type="Actor") for star in stars_list]
         directors = [Person(name=wiki_director, person_type="Director")] if wiki_director else []
@@ -167,74 +170,104 @@ class FreeMovieFetcher(BaseFetcher):
         )
 
     def _fetch_wikipedia_info(
-        self, title: str, year: Optional[int]
+        self, title: str, year: Optional[int], imdb_id: Optional[str] = None
     ) -> tuple[Optional[str], Optional[str], Optional[str], list[str], Optional[str], list[str]]:
         plot: Optional[str] = None
         director: Optional[str] = None
         writer: Optional[str] = None
         genres: list[str] = []
         poster: Optional[str] = None
-        tags: list[str] = []
+        wiki_tags: list[str] = []
 
-        search_terms = []
-        if year:
-            search_terms.append(f"{title} {year} film")
-        search_terms.append(f"{title} film")
-        search_terms.append(title)
+        page_title = resolve_wikipedia_page_title(
+            self.client, title, year=year, imdb_id=imdb_id, media_type="movie"
+        )
 
-        page_title = None
-        for term in search_terms:
-            search_url = f"https://en.wikipedia.org/w/api.php?action=opensearch&search={urllib.parse.quote(term)}&limit=3&format=json"
+        if page_title:
+            # Fetch Wikipedia categories for rich thematic tags
+            wiki_tags = fetch_wikipedia_categories(self.client, page_title, media_title=title)
+
+            sum_url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{urllib.parse.quote(page_title)}"
             try:
-                resp = self.client.get(search_url)
+                resp = self.client.get(sum_url)
                 if resp.status_code == 200:
-                    candidates = resp.json()[1]
-                    if candidates:
-                        page_title = candidates[0]
-                        break
+                    data = resp.json()
+                    extract = data.get("extract")
+                    desc = data.get("description", "")
+                    orig_img = (data.get("originalimage") or {}).get("source")
+                    if orig_img:
+                        poster = orig_img
+
+                    if extract:
+                        plot = extract
+
+                        # Try to extract director: "directed by <Director>"
+                        dir_match = re.search(r"directed by ([A-Z][a-z]+ (?:[A-Z][a-z]+ )?[A-Z][a-z]+)", extract)
+                        if dir_match:
+                            director = dir_match.group(1).strip()
+                        elif desc and "film by " in desc:
+                            director = desc.split("film by ")[-1].strip()
+
+                        # Try to extract writer: "written by <Writer>" or "written and directed by <Writer>"
+                        w_match = re.search(r"written (?:and directed )?by ([A-Z][a-z]+ (?:[A-Z][a-z]+ )?[A-Z][a-z]+)", extract)
+                        if w_match:
+                            writer = w_match.group(1).strip()
+
+                        # Infer common genres from extract
+                        for g in [
+                            "Animation",
+                            "Science Fiction",
+                            "Thriller",
+                            "Action",
+                            "Drama",
+                            "Comedy",
+                            "Horror",
+                            "Romance",
+                            "Crime",
+                            "Adventure",
+                            "Fantasy",
+                            "Mystery",
+                            "Western",
+                            "Documentary",
+                        ]:
+                            if re.search(rf"\b{g}\b", extract, re.IGNORECASE):
+                                genres.append(g)
             except Exception:
-                continue
+                pass
 
-        if not page_title:
-            return plot, director, writer, genres, poster, tags
+        # If genres not found from extract, infer from wiki_tags
+        if not genres and wiki_tags:
+            for tag in wiki_tags:
+                tag_lower = tag.lower()
+                for g in [
+                    "Action",
+                    "Adventure",
+                    "Animation",
+                    "Comedy",
+                    "Crime",
+                    "Documentary",
+                    "Drama",
+                    "Fantasy",
+                    "Horror",
+                    "Mystery",
+                    "Romance",
+                    "Science Fiction",
+                    "Thriller",
+                    "Western",
+                ]:
+                    if g.lower() in tag_lower and g not in genres:
+                        genres.append(g)
 
-        # Fetch Wikipedia categories for rich thematic tags
-        tags = fetch_wikipedia_categories(self.client, page_title, media_title=title)
+        # Baseline tags guaranteed for every movie
+        base_tags: list[str] = []
+        if genres:
+            base_tags.extend(genres)
+        if year:
+            base_tags.append(f"{year // 10 * 10}s")
+        base_tags.append("Feature Film")
 
-        sum_url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{urllib.parse.quote(page_title)}"
-        try:
-            resp = self.client.get(sum_url)
-            if resp.status_code == 200:
-                data = resp.json()
-                extract = data.get("extract")
-                desc = data.get("description", "")
-                orig_img = (data.get("originalimage") or {}).get("source")
-                if orig_img:
-                    poster = orig_img
-
-                if extract:
-                    plot = extract
-
-                    # Try to extract director: "directed by <Director>"
-                    dir_match = re.search(r"directed by ([A-Z][a-z]+ (?:[A-Z][a-z]+ )?[A-Z][a-z]+)", extract)
-                    if dir_match:
-                        director = dir_match.group(1).strip()
-                    elif desc and "film by " in desc:
-                        director = desc.split("film by ")[-1].strip()
-
-                    # Try to extract writer: "written by <Writer>" or "written and directed by <Writer>"
-                    w_match = re.search(r"written (?:and directed )?by ([A-Z][a-z]+ (?:[A-Z][a-z]+ )?[A-Z][a-z]+)", extract)
-                    if w_match:
-                        writer = w_match.group(1).strip()
-
-                    # Infer common genres from extract
-                    for g in ["Animation", "Science Fiction", "Thriller", "Action", "Drama", "Comedy", "Horror", "Romance", "Crime"]:
-                        if re.search(rf"\b{g}\b", extract, re.IGNORECASE):
-                            genres.append(g)
-        except Exception:
-            pass
-
-        return plot, director, writer, genres, poster, deduplicate_tags(tags)
+        all_tags = deduplicate_tags(base_tags + wiki_tags)
+        return plot, director, writer, genres, poster, all_tags
 
     def search_tv(self, query: str, year: Optional[int] = None) -> list[SearchResult]:
         return []

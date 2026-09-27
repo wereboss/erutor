@@ -2,7 +2,13 @@
 
 from unittest.mock import MagicMock
 import httpx
-from erutor.tags import clean_tag, clean_wiki_category, deduplicate_tags, fetch_wikipedia_categories
+from erutor.tags import (
+    clean_tag,
+    clean_wiki_category,
+    deduplicate_tags,
+    fetch_wikipedia_categories,
+    resolve_wikipedia_page_title,
+)
 
 
 def test_clean_tag():
@@ -46,6 +52,8 @@ def test_clean_wiki_category():
 
     # Self-referential match
     assert clean_wiki_category("Category:Breaking Bad", media_title="Breaking Bad") is None
+    assert clean_wiki_category("Category:The Godfather", media_title="The Godfather") is None
+    assert clean_wiki_category("Category:Godfather", media_title="The Godfather") is None
 
 
 def test_deduplicate_tags():
@@ -79,3 +87,67 @@ def test_fetch_wikipedia_categories():
     assert "mass surveillance" in tags
     assert "All Wikipedia articles written in American English" not in tags
     assert not any("Linklater" in t for t in tags)
+
+
+def test_resolve_wikipedia_page_title_wikidata_imdb():
+    mock_client = MagicMock(spec=httpx.Client)
+
+    def mock_get(url, *args, **kwargs):
+        resp = MagicMock()
+        resp.status_code = 200
+        params = kwargs.get("params", {})
+        if "haswbstatement:P345" in params.get("srsearch", ""):
+            resp.json.return_value = {"query": {"search": [{"title": "Q163872"}]}}
+        elif params.get("action") == "wbgetentities" and params.get("ids") == "Q163872":
+            resp.json.return_value = {
+                "entities": {"Q163872": {"sitelinks": {"enwiki": {"title": "The Dark Knight"}}}}
+            }
+        else:
+            resp.json.return_value = {}
+        return resp
+
+    mock_client.get.side_effect = mock_get
+
+    title = resolve_wikipedia_page_title(mock_client, "The Dark Knight", imdb_id="tt0468569")
+    assert title == "The Dark Knight"
+
+
+def test_resolve_wikipedia_page_title_wikidata_tvdb():
+    mock_client = MagicMock(spec=httpx.Client)
+
+    def mock_get(url, *args, **kwargs):
+        resp = MagicMock()
+        resp.status_code = 200
+        params = kwargs.get("params", {})
+        if "haswbstatement:P4835" in params.get("srsearch", ""):
+            resp.json.return_value = {"query": {"search": [{"title": "Q117706339"}]}}
+        elif params.get("action") == "wbgetentities" and params.get("ids") == "Q117706339":
+            resp.json.return_value = {
+                "entities": {"Q117706339": {"sitelinks": {"enwiki": {"title": "A Knight of the Seven Kingdoms (TV series)"}}}}
+            }
+        else:
+            resp.json.return_value = {}
+        return resp
+
+    mock_client.get.side_effect = mock_get
+
+    title = resolve_wikipedia_page_title(mock_client, "A Knight of the Seven Kingdoms", tvdb_id="433631", media_type="tv")
+    assert title == "A Knight of the Seven Kingdoms (TV series)"
+
+
+def test_resolve_wikipedia_page_title_opensearch_fallback():
+    mock_client = MagicMock(spec=httpx.Client)
+
+    def mock_get(url, *args, **kwargs):
+        resp = MagicMock()
+        resp.status_code = 200
+        if "opensearch" in url and "1972" in url:
+            resp.json.return_value = ["The Godfather (1972 film)", ["The Godfather (1972 film)"]]
+        else:
+            resp.json.return_value = {}
+        return resp
+
+    mock_client.get.side_effect = mock_get
+
+    title = resolve_wikipedia_page_title(mock_client, "The Godfather", year=1972, media_type="movie")
+    assert title == "The Godfather (1972 film)"
